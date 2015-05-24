@@ -33,16 +33,20 @@ namespace eve_log_watcher
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.buttonRefresh = new System.Windows.Forms.Button();
+            this.labelChannels = new System.Windows.Forms.Label();
+            this.labelCurentSystem = new System.Windows.Forms.Label();
+            this.labelWarning = new System.Windows.Forms.Label();
             this.comboLogs = new System.Windows.Forms.ComboBox();
             this.labelTime = new System.Windows.Forms.Label();
             this.panelRight = new System.Windows.Forms.Panel();
             this.dataGridIntel = new System.Windows.Forms.DataGridView();
             this.colText = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.timerTime = new System.Windows.Forms.Timer(this.components);
             this.map = new eve_log_watcher.controls.Map();
             this.logWatcherLocal = new eve_log_watcher.controls.LogWatcher();
             this.logWatcherIntel = new eve_log_watcher.controls.LogWatcher();
-            this.timerTime = new System.Windows.Forms.Timer(this.components);
             this.panelTop.SuspendLayout();
             this.panelRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridIntel)).BeginInit();
@@ -71,6 +75,10 @@ namespace eve_log_watcher
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.buttonRefresh);
+            this.panelTop.Controls.Add(this.labelChannels);
+            this.panelTop.Controls.Add(this.labelCurentSystem);
+            this.panelTop.Controls.Add(this.labelWarning);
             this.panelTop.Controls.Add(this.comboLogs);
             this.panelTop.Controls.Add(this.labelTime);
             this.panelTop.Controls.Add(this.buttonStart);
@@ -81,15 +89,58 @@ namespace eve_log_watcher
             this.panelTop.Size = new System.Drawing.Size(1276, 39);
             this.panelTop.TabIndex = 4;
             // 
+            // buttonRefresh
+            // 
+            this.buttonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonRefresh.BackgroundImage = global::eve_log_watcher.Properties.Resources.refresh;
+            this.buttonRefresh.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.buttonRefresh.Location = new System.Drawing.Point(1243, 8);
+            this.buttonRefresh.Name = "buttonRefresh";
+            this.buttonRefresh.Size = new System.Drawing.Size(21, 21);
+            this.buttonRefresh.TabIndex = 9;
+            this.buttonRefresh.UseVisualStyleBackColor = true;
+            this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
+            // 
+            // labelChannels
+            // 
+            this.labelChannels.AutoSize = true;
+            this.labelChannels.Location = new System.Drawing.Point(875, 11);
+            this.labelChannels.Name = "labelChannels";
+            this.labelChannels.Size = new System.Drawing.Size(54, 13);
+            this.labelChannels.TabIndex = 8;
+            this.labelChannels.Text = "Channels:";
+            // 
+            // labelCurentSystem
+            // 
+            this.labelCurentSystem.AutoSize = true;
+            this.labelCurentSystem.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelCurentSystem.ForeColor = System.Drawing.Color.DarkGreen;
+            this.labelCurentSystem.Location = new System.Drawing.Point(180, 12);
+            this.labelCurentSystem.Name = "labelCurentSystem";
+            this.labelCurentSystem.Size = new System.Drawing.Size(114, 17);
+            this.labelCurentSystem.TabIndex = 7;
+            this.labelCurentSystem.Text = "CurrentSystem";
+            // 
+            // labelWarning
+            // 
+            this.labelWarning.AutoSize = true;
+            this.labelWarning.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.labelWarning.ForeColor = System.Drawing.Color.DarkRed;
+            this.labelWarning.Location = new System.Drawing.Point(180, 12);
+            this.labelWarning.Name = "labelWarning";
+            this.labelWarning.Size = new System.Drawing.Size(359, 17);
+            this.labelWarning.TabIndex = 6;
+            this.labelWarning.Text = "Dont know where u are ... please use stargate :)";
+            // 
             // comboLogs
             // 
             this.comboLogs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboLogs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboLogs.FormattingEnabled = true;
-            this.comboLogs.Location = new System.Drawing.Point(875, 8);
+            this.comboLogs.Location = new System.Drawing.Point(948, 8);
             this.comboLogs.Name = "comboLogs";
-            this.comboLogs.Size = new System.Drawing.Size(389, 21);
+            this.comboLogs.Size = new System.Drawing.Size(289, 21);
             this.comboLogs.TabIndex = 5;
             this.comboLogs.SelectedIndexChanged += new System.EventHandler(this.comboLogs_SelectedIndexChanged);
             // 
@@ -153,6 +204,12 @@ namespace eve_log_watcher
             this.colSystem.Name = "colSystem";
             this.colSystem.ReadOnly = true;
             // 
+            // timerTime
+            // 
+            this.timerTime.Enabled = true;
+            this.timerTime.Interval = 500;
+            this.timerTime.Tick += new System.EventHandler(this.timerTime_Tick);
+            // 
             // map
             // 
             this.map.BackColor = System.Drawing.Color.White;
@@ -178,12 +235,6 @@ namespace eve_log_watcher
             this.logWatcherIntel.SynchronizingObject = this;
             this.logWatcherIntel.ProcessNewData += new System.EventHandler<eve_log_watcher.controls.ProcessNewDataEventArgs>(this.logWatcherIntel_ProcessNewData);
             // 
-            // timerTime
-            // 
-            this.timerTime.Enabled = true;
-            this.timerTime.Interval = 500;
-            this.timerTime.Tick += new System.EventHandler(this.timerTime_Tick);
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -195,8 +246,9 @@ namespace eve_log_watcher
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-            this.Text = "red-watcher";
+            this.Text = "eve-log-watcher";
             this.panelTop.ResumeLayout(false);
+            this.panelTop.PerformLayout();
             this.panelRight.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridIntel)).EndInit();
             this.ResumeLayout(false);
@@ -218,6 +270,10 @@ namespace eve_log_watcher
         private System.Windows.Forms.Label labelTime;
         private System.Windows.Forms.Timer timerTime;
         private System.Windows.Forms.ComboBox comboLogs;
+        private System.Windows.Forms.Label labelCurentSystem;
+        private System.Windows.Forms.Label labelWarning;
+        private System.Windows.Forms.Label labelChannels;
+        private System.Windows.Forms.Button buttonRefresh;
     }
 }
 

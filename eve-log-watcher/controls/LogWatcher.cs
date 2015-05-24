@@ -33,7 +33,12 @@ namespace eve_log_watcher.controls
                                     where match.Success
                                     select match.Groups[1].Value;
 
-            return q.Union(new[] { Settings.Default.intelLogName }).Distinct().ToArray();
+
+            if (!string.IsNullOrEmpty(Settings.Default.intelLogName)) {
+                q = q.Union(new[] { Settings.Default.intelLogName });
+            }
+
+            return q.Distinct().ToArray();
         }
 
         private void OnTick(object sender, EventArgs eventArgs) {

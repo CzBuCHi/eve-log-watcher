@@ -25,7 +25,7 @@ namespace eve_log_watcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("30003766")]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
         public int currentSystemId {
             get {
                 return ((int)(this["currentSystemId"]));
@@ -37,7 +37,7 @@ namespace eve_log_watcher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("TheCitadel")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string intelLogName {
             get {
                 return ((string)(this["intelLogName"]));

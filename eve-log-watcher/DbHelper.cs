@@ -25,8 +25,8 @@ namespace eve_log_watcher
         #region Import data from MySQL Dumps - see http://eve-marketdata.com/developers/mysql.php
 
         public static void EnsureDatatabaseExists() {
-            ConnectionStringSettings c = ConfigurationManager.ConnectionStrings["red-watcher"];
-            IEnumerable<string> q = from o in c.ConnectionString.Split(';')
+            ConnectionStringSettings c = ConfigurationManager.ConnectionStrings["eve-log-watcher"];
+           IEnumerable<string> q = from o in c.ConnectionString.Split(';')
                                     let p = o.Split('=')
                                     where p[0] == "Data Source"
                                     select p[1];

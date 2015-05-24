@@ -24,7 +24,6 @@ namespace eve_log_watcher
             Left = bounds.Left;
             Width = bounds.Width;
 
-            map.CurrentSystemName = DbHelper.DataContext.SolarSystems.Where(o => o.Id == Settings.Default.currentSystemId).Select(o => o.SolarsystemName).FirstOrDefault();
 
             _CitadelLogs = new DataTable();
             _CitadelLogs.Columns.Add("Text", typeof (string));
@@ -39,6 +38,16 @@ namespace eve_log_watcher
 
             comboLogs.DataSource = LogWatcher.GetLogNames();
             comboLogs.SelectedItem = Settings.Default.intelLogName;
+
+            if (Settings.Default.currentSystemId == 0) {
+                labelCurentSystem.Visible = false;
+                labelWarning.Visible = true;
+            } else {
+                map.CurrentSystemName = DbHelper.DataContext.SolarSystems.Where(o => o.Id == Settings.Default.currentSystemId).Select(o => o.SolarsystemName).FirstOrDefault();
+                labelCurentSystem.Text = map.CurrentSystemName;
+                labelCurentSystem.Visible = true;
+                labelWarning.Visible = false;
+            }
         }
 
         private void HookOnKeyPressed(object sender, KeyPressedEventArgs keyPressedEventArgs) {
@@ -92,10 +101,10 @@ namespace eve_log_watcher
                     row.Selected = true;
                     dataGridIntel.FirstDisplayedScrollingRowIndex = row.Index;
                 }
-                List<LogWatcherCitadelProcessNewDataResultItem> result = (List<LogWatcherCitadelProcessNewDataResultItem>) args.Result;
+                List<string> result = (List<string>) args.Result;
                 DateTime now = DateTime.Now;
-                foreach (LogWatcherCitadelProcessNewDataResultItem item in result) {
-                    map.RedInfo[item.System] = now;
+                foreach (string item in result) {
+                    map.RedInfo[item] = now;
                 }
                 map.UpdateNodes();
             };
@@ -106,7 +115,11 @@ namespace eve_log_watcher
         }
 
         private void buttonStart_Click(object sender, EventArgs e) {
-            if (!logWatcherIntel.StartWatch() /*|| !logWatcherLocal.StartWatch()*/) {
+            if (logWatcherIntel.LogName == null) {
+                MessageBox.Show(@"Please select Intel channel...");
+                return;
+            }
+            if (!logWatcherIntel.StartWatch() || !logWatcherLocal.StartWatch()) {
                 MessageBox.Show(@"Missing log files - start EVE to create them.");
                 return;
             }
@@ -121,14 +134,14 @@ namespace eve_log_watcher
             logWatcherLocal.StopWatch();
 
             buttonStop.Enabled = false;
-            comboLogs.Enabled = false;
+            comboLogs.Enabled = true;
             buttonStart.Enabled = true;
         }
 
         private static void WorkerOnDoWork(object sender, DoWorkEventArgs args) {
             LogWatcherCitadelProcessNewDataArg arg = (LogWatcherCitadelProcessNewDataArg) args.Argument;
 
-            List<LogWatcherCitadelProcessNewDataResultItem> systems = new List<LogWatcherCitadelProcessNewDataResultItem>();
+            List<string> systems = new List<string>();
             foreach (string line in arg.Lines) {
                 if (line.IndexOf("EVE System", StringComparison.OrdinalIgnoreCase) != -1) {
                     continue;
@@ -138,10 +151,7 @@ namespace eve_log_watcher
                 string[] solarSystems = DbHelper.EnumerateSolarsystemsInText(text).ToArray();
                 arg.Logs.Rows.Add(text, string.Join(", ", solarSystems));
 
-                systems.AddRange(solarSystems.Select(solarSystem => new LogWatcherCitadelProcessNewDataResultItem {
-                    System = solarSystem,
-                    HasReds = !text.Contains("clr") || !text.Contains("clear")
-                }));
+                systems.AddRange(solarSystems);
             }
             args.Result = systems;
         }
@@ -161,10 +171,13 @@ namespace eve_log_watcher
             public DataTable Logs { get; set; }
         }
 
-        private class LogWatcherCitadelProcessNewDataResultItem
-        {
-            public string System { get; set; }
-            public bool HasReds { get; set; }
+        private void buttonRefresh_Click(object sender, EventArgs e) {
+            string selected = (string) comboLogs.SelectedItem;
+            string[] logNames = LogWatcher.GetLogNames();
+            comboLogs.DataSource = logNames;
+            if (logNames.Contains(selected)) {
+                comboLogs.SelectedItem = selected;
+            }
         }
     }
 }

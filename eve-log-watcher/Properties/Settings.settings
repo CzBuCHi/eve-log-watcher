@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="currentSystemId" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">30003766</Value>
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="intelLogName" Type="System.String" Scope="User">
-      <Value Profile="(Default)">TheCitadel</Value>
+      <Value Profile="(Default)" />
     </Setting>
   </Settings>
 </SettingsFile>
