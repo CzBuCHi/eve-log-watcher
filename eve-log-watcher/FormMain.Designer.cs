@@ -142,7 +142,6 @@ namespace eve_log_watcher
             this.comboLogs.Name = "comboLogs";
             this.comboLogs.Size = new System.Drawing.Size(289, 21);
             this.comboLogs.TabIndex = 5;
-            this.comboLogs.SelectedIndexChanged += new System.EventHandler(this.comboLogs_SelectedIndexChanged);
             // 
             // labelTime
             // 
@@ -220,6 +219,7 @@ namespace eve_log_watcher
             this.map.RedShowDuration = 10;
             this.map.Size = new System.Drawing.Size(875, 411);
             this.map.TabIndex = 0;
+            this.map.SizeChanged += new System.EventHandler(this.map_SizeChanged);
             // 
             // logWatcherLocal
             // 

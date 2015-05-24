@@ -7,7 +7,7 @@ namespace eve_log_watcher.model
     public class DataContext : DbContext
     {
         public DataContext()
-            : base(new SQLiteConnection(ConfigurationManager.ConnectionStrings["red-watcher"].ConnectionString), true) {
+            : base(new SQLiteConnection(ConfigurationManager.ConnectionStrings["eve-log-watcher"].ConnectionString), true) {
         }
 
         // ReSharper disable UnusedMember.Global

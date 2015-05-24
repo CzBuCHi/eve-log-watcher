@@ -38,6 +38,7 @@ namespace eve_log_watcher
 
             comboLogs.DataSource = LogWatcher.GetLogNames();
             comboLogs.SelectedItem = Settings.Default.intelLogName;
+            this.comboLogs.SelectedIndexChanged += comboLogs_SelectedIndexChanged;
 
             if (Settings.Default.currentSystemId == 0) {
                 labelCurentSystem.Visible = false;
@@ -86,7 +87,10 @@ namespace eve_log_watcher
                 if (currentSystemId != null) {
                     Settings.Default.currentSystemId = currentSystemId.Value;
                     map.CurrentSystemName = currentSystem;
-                }
+                    labelCurentSystem.Text = map.CurrentSystemName;
+                    labelCurentSystem.Visible = true;
+                    labelWarning.Visible = false;
+                }                
             }
         }
 
@@ -178,6 +182,10 @@ namespace eve_log_watcher
             if (logNames.Contains(selected)) {
                 comboLogs.SelectedItem = selected;
             }
+        }
+
+        private void map_SizeChanged(object sender, EventArgs e) {
+            ClientSize = new Size(ClientSize.Width, map.Height + panelTop.Height);
         }
     }
 }
