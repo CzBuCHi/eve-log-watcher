@@ -129,8 +129,9 @@ namespace eve_log_watcher
             }
 
             buttonStart.Enabled = false;
-            comboLogs.Enabled = true;
+            comboLogs.Enabled = false;
             buttonStop.Enabled = true;
+            buttonRefresh.Enabled = false;
         }
 
         private void buttonStop_Click(object sender, EventArgs e) {
@@ -140,6 +141,7 @@ namespace eve_log_watcher
             buttonStop.Enabled = false;
             comboLogs.Enabled = true;
             buttonStart.Enabled = true;
+            buttonRefresh.Enabled = true;
         }
 
         private static void WorkerOnDoWork(object sender, DoWorkEventArgs args) {
