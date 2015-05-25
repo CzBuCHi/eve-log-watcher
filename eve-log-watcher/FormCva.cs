@@ -46,15 +46,46 @@ namespace eve_log_watcher
             return _Form;
         }
 
+        private class FillDataTableArg
+        {
+            public DataTable Table { get; set; }
+            public string Names { get; set; }
+        }
+
+        private static bool _FillingDataTable = false;
         private static void FillDataTable() {
+            if (_FillingDataTable) {
+                return;
+            }
+            _FillingDataTable = true;
+            _Form._DataTable.Rows.Clear();
+            BackgroundWorker worker = new BackgroundWorker();
+            worker.DoWork += FillDataTable;
+            worker.RunWorkerCompleted += (sender, args) => {
+                if (args.Error != null) {
+                    MessageBox.Show(args.Error.Message);
+                    return;
+                }
+
+                _Form.AfterFillDataTable((int) args.Result);
+                _FillingDataTable = false;
+            };
+
+            string names = Clipboard.GetText().Replace("\r\n", "%0D%0A");
+            worker.RunWorkerAsync(new FillDataTableArg { Table = _Form._DataTable, Names = names });
+        }
+
+        private static void FillDataTable(object sender, DoWorkEventArgs args) {
+            FillDataTableArg arg = (FillDataTableArg) args.Argument;
+
+            // request
             WebRequest request = WebRequest.CreateHttp("http://local.cva-eve.org/index.php");
             request.Method = "POST";
             request.ContentType = "application/x-www-form-urlencoded";
-
-            string names = Clipboard.GetText().Replace("\r\n", "%0D%0A");
+            
             using (Stream stream = request.GetRequestStream()) {
                 using (StreamWriter writer = new StreamWriter(stream)) {
-                    writer.Write("searchRows=" + names);
+                    writer.Write("searchRows=" + arg.Names);
                 }
             }
 
@@ -101,7 +132,7 @@ namespace eve_log_watcher
 
             XElement[] xTrs = xTable.Elements("tr").Skip(1).ToArray();
 
-            _Form._DataTable.Rows.Clear();
+            arg.Table.Rows.Clear();
 
             int kosCounter = 0;
             foreach (XElement xTr in xTrs) {
@@ -114,10 +145,18 @@ namespace eve_log_watcher
                     if (isKos) {
                         ++kosCounter;
                     }
-                    _Form._DataTable.Rows.Add(GetValue(xTds[1]), pilotKos, GetValue(xTds[2]), corporationKos, GetValue(xTds[3]), allianceKos, isKos);
+                    arg.Table.Rows.Add(GetValue(xTds[1]), pilotKos, GetValue(xTds[2]), corporationKos, GetValue(xTds[3]), allianceKos, isKos);
                 }
             }
-            _Form.Text = @"KOS: " + kosCounter;
+            args.Result = kosCounter;
+        }
+
+        private void AfterFillDataTable(int kosCount) {
+            Text = @"KOS: " + kosCount;
+            dataGridCva.Refresh();
+
+            Height = Math.Min(dataGridCva.Rows.Count * (dataGridCva.RowTemplate.Height + dataGridCva.RowTemplate.DividerHeight), 500) + 70;
+            Width = Math.Max(dataGridCva.Columns.Cast<DataGridViewColumn>().Where(c => c.Visible).Sum(c => c.Width + c.DividerWidth), 300) + 40;
         }
 
         private static string GetValue(XElement xElement) {
@@ -153,9 +192,6 @@ namespace eve_log_watcher
                     row.Cells[colAllianceName.Name].Style.SelectionBackColor = redSelected;
                 }
             }
-
-            Height = Math.Min(dataGridCva.Rows.Count * (dataGridCva.RowTemplate.Height + dataGridCva.RowTemplate.DividerHeight), 500) + 70;
-            Width = Math.Max(dataGridCva.Columns.Cast<DataGridViewColumn>().Where(c => c.Visible).Sum(c => c.Width + c.DividerWidth), 300) + 40;
 
             DataGridViewColumn column = dataGridCva.Columns[colKos.Name];
             Debug.Assert(column != null);
