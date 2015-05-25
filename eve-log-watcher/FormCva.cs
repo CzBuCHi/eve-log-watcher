@@ -58,6 +58,8 @@ namespace eve_log_watcher
                 return;
             }
             _FillingDataTable = true;
+            _Form.labelLoading.Visible = true;
+            _Form.dataGridCva.Visible = false;
             _Form._DataTable.Rows.Clear();
             BackgroundWorker worker = new BackgroundWorker();
             worker.DoWork += FillDataTable;
@@ -152,9 +154,12 @@ namespace eve_log_watcher
         }
 
         private void AfterFillDataTable(int kosCount) {
-            Text = @"KOS: " + kosCount;
-            dataGridCva.Refresh();
+            labelLoading.Visible = false;
+            dataGridCva.Visible = true;
 
+            Text = @"KOS: " + kosCount;
+            _Form.dataGridCva.DataSource = _Form._DataTable;
+            
             Height = Math.Min(dataGridCva.Rows.Count * (dataGridCva.RowTemplate.Height + dataGridCva.RowTemplate.DividerHeight), 500) + 70;
             Width = Math.Max(dataGridCva.Columns.Cast<DataGridViewColumn>().Where(c => c.Visible).Sum(c => c.Width + c.DividerWidth), 300) + 40;
         }

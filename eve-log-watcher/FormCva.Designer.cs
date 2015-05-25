@@ -25,9 +25,9 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {            
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridCva = new System.Windows.Forms.DataGridView();
             this.colPilotName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.colCorporationName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -36,6 +36,7 @@
             this.colCorporationKos = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.colAllianceKos = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.colKos = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.labelLoading = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridCva)).BeginInit();
             this.SuspendLayout();
             // 
@@ -70,13 +71,13 @@
             // 
             // colPilotName
             // 
-            this.colPilotName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.colPilotName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.colPilotName.DataPropertyName = "PilotName";
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.ControlLight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.Black;
-            this.colPilotName.DefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.ControlLight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.Black;
+            this.colPilotName.DefaultCellStyle = dataGridViewCellStyle1;
             this.colPilotName.HeaderText = "PilotName";
             this.colPilotName.Name = "colPilotName";
             this.colPilotName.ReadOnly = true;
@@ -84,13 +85,13 @@
             // 
             // colCorporationName
             // 
-            this.colCorporationName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.colCorporationName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.colCorporationName.DataPropertyName = "CorporationName";
-            dataGridViewCellStyle5.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.ControlLight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.Black;
-            this.colCorporationName.DefaultCellStyle = dataGridViewCellStyle5;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.ControlLight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.Black;
+            this.colCorporationName.DefaultCellStyle = dataGridViewCellStyle2;
             this.colCorporationName.HeaderText = "CorporationName";
             this.colCorporationName.Name = "colCorporationName";
             this.colCorporationName.ReadOnly = true;
@@ -98,13 +99,13 @@
             // 
             // colAllianceName
             // 
-            this.colAllianceName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.colAllianceName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.colAllianceName.DataPropertyName = "AllianceName";
-            dataGridViewCellStyle6.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.SystemColors.ControlLight;
-            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.Black;
-            this.colAllianceName.DefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.ControlLight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.Black;
+            this.colAllianceName.DefaultCellStyle = dataGridViewCellStyle3;
             this.colAllianceName.HeaderText = "AllianceName";
             this.colAllianceName.Name = "colAllianceName";
             this.colAllianceName.ReadOnly = true;
@@ -146,11 +147,21 @@
             this.colKos.Visible = false;
             this.colKos.Width = 31;
             // 
+            // labelLoading
+            // 
+            this.labelLoading.AutoSize = true;
+            this.labelLoading.Location = new System.Drawing.Point(12, 9);
+            this.labelLoading.Name = "labelLoading";
+            this.labelLoading.Size = new System.Drawing.Size(57, 13);
+            this.labelLoading.TabIndex = 5;
+            this.labelLoading.Text = "Loading ...";
+            // 
             // FormCva
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(304, 61);
+            this.Controls.Add(this.labelLoading);
             this.Controls.Add(this.dataGridCva);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.MinimumSize = new System.Drawing.Size(320, 100);
@@ -162,6 +173,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormCva_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridCva)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -175,5 +187,6 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn colCorporationKos;
         private System.Windows.Forms.DataGridViewCheckBoxColumn colAllianceKos;
         private System.Windows.Forms.DataGridViewCheckBoxColumn colKos;
+        private System.Windows.Forms.Label labelLoading;
     }
 }
