@@ -49,14 +49,27 @@
       <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="EveAI.Core">
+      <HintPath>..\EveAI\EveAI.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="EveAI.Live">
+      <HintPath>..\EveAI\EveAI.Live.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip.Reduced">
+      <HintPath>..\EveAI\Ionic.Zip.Reduced.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Msagl">
-      <HintPath>..\3rd_party\$(Configuration)\Microsoft.Msagl.dll</HintPath>
+      <HintPath>..\Microsoft.Msagl\$(Configuration)\Microsoft.Msagl.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Msagl.Drawing">
-      <HintPath>..\3rd_party\$(Configuration)\Microsoft.Msagl.Drawing.dll</HintPath>
+      <HintPath>..\Microsoft.Msagl\$(Configuration)\Microsoft.Msagl.Drawing.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Msagl.GraphViewerGdi">
-      <HintPath>..\3rd_party\$(Configuration)\Microsoft.Msagl.GraphViewerGdi.dll</HintPath>
+      <HintPath>..\Microsoft.Msagl\$(Configuration)\Microsoft.Msagl.GraphViewerGdi.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -91,6 +104,8 @@
     <Compile Include="controls\Map.Designer.cs">
       <DependentUpon>Map.cs</DependentUpon>
     </Compile>
+    <Compile Include="cva-kos-api\DataClasses.cs" />
+    <Compile Include="cva-kos-api\CvaClient.cs" />
     <Compile Include="DbHelper.cs" />
     <Compile Include="FormCva.cs">
       <SubType>Form</SubType>
