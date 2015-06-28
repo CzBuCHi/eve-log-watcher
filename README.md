@@ -4,5 +4,8 @@ App is watching log file for changes, parsing solar system names from new entrie
 
 Player current location is updated by watching 'Local'.
 
+Experimental function: Global shortcut Ctrl+F 
+- content of clipblard will be send to cva.kos-api.org to execute kos check.
+	
 Screenhot:
 ![Screenhot](https://raw.githubusercontent.com/CzBuCHi/eve-log-watcher/master/screenhot.png)
