@@ -91,6 +91,7 @@ namespace eve_log_watcher
                     Settings.Default.currentSystemId = currentSystemId.Value;
                     map.CurrentSystemName = currentSystem;
                     labelCurentSystem.Text = map.CurrentSystemName;
+                    comboBoxSystems.SelectedText = map.CurrentSystemName;
                     labelCurentSystem.Visible = true;
                     labelWarning.Visible = false;
                 }                
@@ -115,7 +116,7 @@ namespace eve_log_watcher
                 }
                 map.UpdateNodes();
             };
-            worker.RunWorkerAsync(new LogWatcherCitadelProcessNewDataArg {
+            worker.RunWorkerAsync(new LogWatcherIntelProcessNewDataArg {
                 Lines = e.Lines,
                 Logs = _CitadelLogs
             });
@@ -148,7 +149,7 @@ namespace eve_log_watcher
         }
 
         private static void WorkerOnDoWork(object sender, DoWorkEventArgs args) {
-            LogWatcherCitadelProcessNewDataArg arg = (LogWatcherCitadelProcessNewDataArg) args.Argument;
+            LogWatcherIntelProcessNewDataArg arg = (LogWatcherIntelProcessNewDataArg) args.Argument;
 
             List<string> systems = new List<string>();
             foreach (string line in arg.Lines) {
@@ -174,7 +175,7 @@ namespace eve_log_watcher
             logWatcherIntel.LogName = Settings.Default.intelLogName;
         }
 
-        private class LogWatcherCitadelProcessNewDataArg
+        private class LogWatcherIntelProcessNewDataArg
         {
             public string[] Lines { get; set; }
             public DataTable Logs { get; set; }

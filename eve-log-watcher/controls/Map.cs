@@ -72,28 +72,29 @@ namespace eve_log_watcher.controls
                                               where o.SolarsystemName == _CurrentSystemName
                                               select new SystemInfo { Id = o.Id, Name = o.SolarsystemName };
 
-            
+            const int cMaxSystems = 8;
+
             current = current.ToArray();
-            IEnumerable<SystemInfo> total = current;
+            SystemInfo[] total = current.ToArray();
             SystemInfo[] oneJump = getConnected(current).ToArray();
-            total = total.Union(oneJump);
-            SystemInfo[] twoJumps = getConnected(oneJump).ToArray();
-            total = total.Union(twoJumps);
+            total = total.Union(oneJump).ToArray();
+            SystemInfo[] twoJumps = getConnected(oneJump).Except(total).Distinct().ToArray();
+            total = total.Union(twoJumps).ToArray();
 
             SystemInfo[] threeJumps = null;
             SystemInfo[] fourJumps = null;
             SystemInfo[] fiveJumps = null;
-            if (twoJumps.Length < 15) {
-                threeJumps = getConnected(twoJumps).ToArray();
-                total = total.Union(threeJumps);
+            if (twoJumps.Length < cMaxSystems) {
+                threeJumps = getConnected(twoJumps).Except(total).Distinct().ToArray();
+                total = total.Union(threeJumps).ToArray();
 
-                if (threeJumps.Length < 15) {
-                    fourJumps = getConnected(threeJumps).ToArray();
-                    total = total.Union(fourJumps);
+                if (threeJumps.Length < cMaxSystems) {
+                    fourJumps = getConnected(threeJumps).Except(total).Distinct().ToArray();
+                    total = total.Union(fourJumps).ToArray();
 
-                    if (fourJumps.Length < 15) {
-                        fiveJumps = getConnected(fourJumps).ToArray();
-                        total = total.Union(fiveJumps);
+                    if (fourJumps.Length < cMaxSystems) {
+                        fiveJumps = getConnected(fourJumps).Except(total).Distinct().ToArray();
+                        total = total.Union(fiveJumps).ToArray();
                     }
                 }
             }
