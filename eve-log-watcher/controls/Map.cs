@@ -61,51 +61,9 @@ namespace eve_log_watcher.controls
         }
 
         private void UpdateGraph() {
-            Func<IEnumerable<SystemInfo>, IEnumerable<SystemInfo>> getConnected = s => from o in s
-                                                                                       from o2 in from o3 in DbHelper.DataContext.SolarSystemJumps
-                                                                                                  join o4 in DbHelper.DataContext.SolarSystems on o3.ToSolarsystemId equals o4.Id
-                                                                                                  where o3.FromSolarsystemId == o.Id
-                                                                                                  select o4
-                                                                                       select new SystemInfo { Id = o2.Id, PrevId = o.Id, Name = o2.SolarsystemName };
-
-            IEnumerable<SystemInfo> current = from o in DbHelper.DataContext.SolarSystems
-                                              where o.SolarsystemName == _CurrentSystemName
-                                              select new SystemInfo { Id = o.Id, Name = o.SolarsystemName };
-
-            const int cMaxSystems = 8;
-
-            current = current.ToArray();
-            SystemInfo[] total = current.ToArray();
-            SystemInfo[] oneJump = getConnected(current).ToArray();
-            total = total.Union(oneJump).ToArray();
-            SystemInfo[] twoJumps = getConnected(oneJump).Except(total).Distinct().ToArray();
-            total = total.Union(twoJumps).ToArray();
-
-            SystemInfo[] threeJumps = null;
-            SystemInfo[] fourJumps = null;
-            SystemInfo[] fiveJumps = null;
-            if (twoJumps.Length < cMaxSystems) {
-                threeJumps = getConnected(twoJumps).Except(total).Distinct().ToArray();
-                total = total.Union(threeJumps).ToArray();
-
-                if (threeJumps.Length < cMaxSystems) {
-                    fourJumps = getConnected(threeJumps).Except(total).Distinct().ToArray();
-                    total = total.Union(fourJumps).ToArray();
-
-                    if (fourJumps.Length < cMaxSystems) {
-                        fiveJumps = getConnected(fourJumps).Except(total).Distinct().ToArray();
-                        total = total.Union(fiveJumps).ToArray();
-                    }
-                }
-            }
-            SystemInfo[] zero = new SystemInfo[0];
-            threeJumps = threeJumps ?? zero;
-            fourJumps = fourJumps ?? zero;
-            fiveJumps = fiveJumps ?? zero;
-
-            Dictionary<int, SystemInfo> infos = total.ToDictionary(o => o.Id);
-
-            SystemInfo[][] q = { (SystemInfo[]) current, oneJump, twoJumps, threeJumps, fourJumps, fiveJumps };
+            Dictionary<int, SystemInfo> infos;
+            SystemInfo[][] q;
+            GetSystems(out infos, out q);
 
             gViewer.Graph = null;
             Graph graph = new Graph("graph");
@@ -114,28 +72,28 @@ namespace eve_log_watcher.controls
 
             lock (_Nodes) {
                 _Nodes.Clear();
-
-                foreach (SystemInfo[] qq in q) {
-                    foreach (SystemInfo info in qq) {
-                        if (!_Nodes.ContainsKey(info.Name)) {
-                            Node node = graph.AddNode(info.Name);
-                            _Nodes.Add(info.Name, node);
+                foreach (SystemInfo info in q.SelectMany(o => o)) {
+                    if (!_Nodes.ContainsKey(info.Name)) {
+                        Node node = graph.AddNode(info.Name);
+                        if (!info.ShowName) {
+                            node.LabelText = "";
                         }
+                        _Nodes.Add(info.Name, node);
+                    }
 
-                        if (info.PrevId == null) {
-                            continue;
-                        }
+                    if (info.PrevId == null) {
+                        continue;
+                    }
 
-                        SystemInfo prev = infos[info.PrevId.Value];
+                    SystemInfo prev = infos[info.PrevId.Value];
 
-                        HashSet<string> list;
-                        if (!dict.TryGetValue(prev.Name, out list)) {
-                            list = new HashSet<string>();
-                            dict[prev.Name] = list;
-                        }
-                        if (!list.Contains(info.Name)) {
-                            list.Add(info.Name);
-                        }
+                    HashSet<string> list;
+                    if (!dict.TryGetValue(prev.Name, out list)) {
+                        list = new HashSet<string>();
+                        dict[prev.Name] = list;
+                    }
+                    if (!list.Contains(info.Name)) {
+                        list.Add(info.Name);
                     }
                 }
             }
@@ -154,13 +112,65 @@ namespace eve_log_watcher.controls
             }
 
             gViewer.Graph = graph;
-            Height = (int) (Width * gViewer.GraphHeight / gViewer.GraphWidth);
+            Height = (int)(Width * gViewer.GraphHeight / gViewer.GraphWidth);
             UpdateNodes();
+        }
+
+        private void GetSystems(out Dictionary<int, SystemInfo> infos, out SystemInfo[][] systemsByJumps) {
+            const int cMaxSystems = 8;
+
+            Func<IEnumerable<SystemInfo>, IEnumerable<SystemInfo>> getConnected = s => from o in s
+                                                                                       from o2 in from o3 in DbHelper.DataContext.SolarSystemJumps
+                                                                                                  join o4 in DbHelper.DataContext.SolarSystems on o3.ToSolarsystemId equals o4.Id
+                                                                                                  where o3.FromSolarsystemId == o.Id
+                                                                                                  select o4
+                                                                                       select new SystemInfo { Id = o2.Id, PrevId = o.Id, Name = o2.SolarSystemName };
+
+            IEnumerable<SystemInfo> current = from o in DbHelper.DataContext.SolarSystems
+                                              where o.SolarSystemName == _CurrentSystemName
+                                              select new SystemInfo { Id = o.Id, Name = o.SolarSystemName };
+
+            current = current.ToArray();
+
+            SystemInfo[] total = current.ToArray();
+
+            SystemInfo[] oneJump = getConnected(current).ToArray();
+            total = total.Union(oneJump).ToArray();
+
+            SystemInfo[] twoJumps = getConnected(oneJump).Except(total).Distinct().ToArray();
+            total = total.Union(twoJumps).ToArray();
+
+            SystemInfo[] threeJumps = getConnected(twoJumps).Except(total).Distinct().ToArray();
+            if (twoJumps.Length > cMaxSystems) {
+                foreach (SystemInfo info in threeJumps) {
+                    info.ShowName = false;
+                }
+            }
+            total = total.Union(threeJumps).ToArray();
+
+            SystemInfo[] fourJumps = getConnected(threeJumps).Except(total).Distinct().ToArray();
+            if (twoJumps.Length > cMaxSystems || threeJumps.Length > cMaxSystems) {
+                foreach (SystemInfo info in fourJumps) {
+                    info.ShowName = false;
+                }
+            }
+            total = total.Union(fourJumps).ToArray();
+
+            SystemInfo[] fiveJumps = getConnected(fourJumps).Except(total).Distinct().ToArray();
+            if (twoJumps.Length > cMaxSystems || threeJumps.Length > cMaxSystems || fourJumps.Length > cMaxSystems) {
+                foreach (SystemInfo info in fiveJumps) {
+                    info.ShowName = false;
+                }
+            }
+            total = total.Union(fiveJumps).Distinct().ToArray();
+
+            infos = total.ToDictionary(o => o.Id);
+            systemsByJumps = new[] { (SystemInfo[])current, oneJump, twoJumps, threeJumps, fourJumps, fiveJumps };
         }
 
         private void Map_SizeChanged(object sender, EventArgs e) {
             if (gViewer.Graph != null) {
-                Height = (int) (Width * gViewer.GraphHeight / gViewer.GraphWidth);
+                Height = (int)(Width * gViewer.GraphHeight / gViewer.GraphWidth);
             }
         }
 
@@ -190,6 +200,8 @@ namespace eve_log_watcher.controls
             public int Id { get; set; }
             public string Name { get; set; }
             public int? PrevId { get; set; }
+
+            public bool ShowName { get; set; } = true;
 
             public override bool Equals(object obj) {
                 if (ReferenceEquals(null, obj)) {

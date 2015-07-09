@@ -18,8 +18,8 @@ namespace eve_log_watcher
 
         public static IEnumerable<string> EnumerateSolarsystemsInText(string text) {
             return from o in DataContext.SolarSystems.ToArray()
-                   where Regex.Match(text, @"(^|\s)" + Regex.Escape(o.SolarsystemName) + @"([\*\s]|$)", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success
-                   select o.SolarsystemName;
+                   where Regex.Match(text, @"(^|\s)" + Regex.Escape(o.SolarSystemName) + @"([\*\s]|$)", RegexOptions.Singleline | RegexOptions.IgnoreCase).Success
+                   select o.SolarSystemName;
         }
 
         #region Import data from MySQL Dumps - see http://eve-marketdata.com/developers/mysql.php

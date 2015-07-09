@@ -21,7 +21,7 @@ namespace eve_log_watcher.model
         public string RegionName { get; set; }
 
         [Column("solarsystem_name")]
-        public string SolarsystemName { get; set; }
+        public string SolarSystemName { get; set; }
 
         [Column("security")]
         public float Security { get; set; }

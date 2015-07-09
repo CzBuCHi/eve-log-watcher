@@ -16,6 +16,7 @@ namespace eve_log_watcher
         private readonly DataTable _CitadelLogs;
         private readonly KeyboardHook _Hook = new KeyboardHook();
         private FormCva _FormCva;
+        private bool _ComboBoxSystemsSetValue;
 
         public FormMain() {
             InitializeComponent();
@@ -39,18 +40,22 @@ namespace eve_log_watcher
 
             comboLogs.DataSource = LogWatcher.GetLogNames();
             comboLogs.SelectedItem = Settings.Default.intelLogName;
-            this.comboLogs.SelectedIndexChanged += comboLogs_SelectedIndexChanged;
+            comboLogs.SelectedIndexChanged += comboLogs_SelectedIndexChanged;
 
+            _ComboBoxSystemsSetValue = true;
             comboBoxSystems.DataSource = DbHelper.DataContext.SolarSystems.ToArray();
+            _ComboBoxSystemsSetValue = false;
             if (Settings.Default.currentSystemId == 0) {
                 labelCurentSystem.Visible = false;
                 labelWarning.Visible = true;                
             } else {
-                map.CurrentSystemName = DbHelper.DataContext.SolarSystems.Where(o => o.Id == Settings.Default.currentSystemId).Select(o => o.SolarsystemName).FirstOrDefault();
+                map.CurrentSystemName = DbHelper.DataContext.SolarSystems.Where(o => o.Id == Settings.Default.currentSystemId).Select(o => o.SolarSystemName).FirstOrDefault();
                 labelCurentSystem.Text = map.CurrentSystemName;
                 labelCurentSystem.Visible = true;
                 labelWarning.Visible = false;
+                _ComboBoxSystemsSetValue = true;
                 comboBoxSystems.SelectedText = map.CurrentSystemName;
+                _ComboBoxSystemsSetValue = false;
             }
         }
 
@@ -83,7 +88,7 @@ namespace eve_log_watcher
             }
             if (currentSystem != null) {
                 IQueryable<int?> q = from o in DbHelper.DataContext.SolarSystems
-                                     where o.SolarsystemName == currentSystem
+                                     where o.SolarSystemName == currentSystem
                                      select (int?) o.Id;
 
                 int? currentSystemId = q.FirstOrDefault();
@@ -91,7 +96,9 @@ namespace eve_log_watcher
                     Settings.Default.currentSystemId = currentSystemId.Value;
                     map.CurrentSystemName = currentSystem;
                     labelCurentSystem.Text = map.CurrentSystemName;
+                    _ComboBoxSystemsSetValue = true;
                     comboBoxSystems.SelectedText = map.CurrentSystemName;
+                    _ComboBoxSystemsSetValue = false; 
                     labelCurentSystem.Visible = true;
                     labelWarning.Visible = false;
                 }                
@@ -195,11 +202,14 @@ namespace eve_log_watcher
         }
 
         private void comboBoxSystems_SelectedIndexChanged(object sender, EventArgs e) {
+            if (_ComboBoxSystemsSetValue || comboBoxSystems.SelectedIndex == -1) {
+                return;
+            }
             SolarSystem solarSystem = (SolarSystem) comboBoxSystems.SelectedItem;
             Settings.Default.currentSystemId = solarSystem.Id;
 
-            map.CurrentSystemName = solarSystem.SolarsystemName;
-            labelCurentSystem.Text = solarSystem.SolarsystemName;
+            map.CurrentSystemName = solarSystem.SolarSystemName;
+            labelCurentSystem.Text = solarSystem.SolarSystemName;
             labelCurentSystem.Visible = true;
             labelWarning.Visible = false;
         }

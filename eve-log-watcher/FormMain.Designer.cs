@@ -95,7 +95,7 @@ namespace eve_log_watcher
             // 
             this.comboBoxSystems.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.comboBoxSystems.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
-            this.comboBoxSystems.DisplayMember = "SolarsystemName";
+            this.comboBoxSystems.DisplayMember = "SolarSystemName";
             this.comboBoxSystems.FormattingEnabled = true;
             this.comboBoxSystems.Location = new System.Drawing.Point(635, 11);
             this.comboBoxSystems.Name = "comboBoxSystems";

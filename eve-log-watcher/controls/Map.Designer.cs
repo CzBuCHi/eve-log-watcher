@@ -53,6 +53,7 @@
             this.gViewer.LayoutEditingEnabled = false;
             this.gViewer.Location = new System.Drawing.Point(0, 0);
             this.gViewer.LooseOffsetForRouting = 0.25D;
+            this.gViewer.MaximumSize = new System.Drawing.Size(1000, 800);
             this.gViewer.MouseHitDistance = 0.05D;
             this.gViewer.Name = "gViewer";
             this.gViewer.NavigationVisible = false;
