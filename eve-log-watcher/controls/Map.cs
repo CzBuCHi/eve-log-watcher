@@ -120,6 +120,7 @@ namespace eve_log_watcher.controls
             const int cMaxSystems = 8;
 
             Func<IEnumerable<SystemInfo>, IEnumerable<SystemInfo>> getConnected = s => from o in s
+                                                                                       where o.ShowName
                                                                                        from o2 in from o3 in DbHelper.DataContext.SolarSystemJumps
                                                                                                   join o4 in DbHelper.DataContext.SolarSystems on o3.ToSolarsystemId equals o4.Id
                                                                                                   where o3.FromSolarsystemId == o.Id

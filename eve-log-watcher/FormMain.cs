@@ -49,12 +49,13 @@ namespace eve_log_watcher
                 labelCurentSystem.Visible = false;
                 labelWarning.Visible = true;                
             } else {
-                map.CurrentSystemName = DbHelper.DataContext.SolarSystems.Where(o => o.Id == Settings.Default.currentSystemId).Select(o => o.SolarSystemName).FirstOrDefault();
+                SolarSystem solarSystem = DbHelper.DataContext.SolarSystems.First(o => o.Id == Settings.Default.currentSystemId);
+                map.CurrentSystemName = solarSystem.SolarSystemName;
                 labelCurentSystem.Text = map.CurrentSystemName;
                 labelCurentSystem.Visible = true;
                 labelWarning.Visible = false;
                 _ComboBoxSystemsSetValue = true;
-                comboBoxSystems.SelectedText = map.CurrentSystemName;
+                comboBoxSystems.SelectedItem = solarSystem;
                 _ComboBoxSystemsSetValue = false;
             }
         }
