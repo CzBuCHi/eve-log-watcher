@@ -72,16 +72,34 @@ namespace eve_log_watcher.controls
                                               where o.SolarsystemName == _CurrentSystemName
                                               select new SystemInfo { Id = o.Id, Name = o.SolarsystemName };
 
+            
             current = current.ToArray();
+            IEnumerable<SystemInfo> total = current;
             SystemInfo[] oneJump = getConnected(current).ToArray();
+            total = total.Union(oneJump);
             SystemInfo[] twoJumps = getConnected(oneJump).ToArray();
-            SystemInfo[] treeJumps = getConnected(twoJumps).ToArray();
-            SystemInfo[] fourJumps = getConnected(treeJumps).ToArray();
-            SystemInfo[] fiveJumps = getConnected(fourJumps).ToArray();
+            total = total.Union(twoJumps);
+            SystemInfo[] threeJumps = getConnected(twoJumps).ToArray();
+            total = total.Union(threeJumps);
+            SystemInfo[] fourJumps;
+            SystemInfo[] fiveJumps;
+            if (threeJumps.Length < 15) {
+                fourJumps = getConnected(threeJumps).ToArray();
+                total = total.Union(fourJumps);
+                if (fourJumps.Length < 15) {
+                    fiveJumps = getConnected(fourJumps).ToArray();
+                    total = total.Union(fiveJumps);
+                } else {
+                    fiveJumps = new SystemInfo[0];
+                }
+            } else {
+                fourJumps = new SystemInfo[0];
+                fiveJumps = new SystemInfo[0];
+            }
 
-            Dictionary<int, SystemInfo> infos = current.Union(oneJump).Union(twoJumps).Union(treeJumps).Union(fourJumps).Union(fiveJumps).ToDictionary(o => o.Id);
+            Dictionary<int, SystemInfo> infos = total.ToDictionary(o => o.Id);
 
-            SystemInfo[][] q = { (SystemInfo[]) current, oneJump, twoJumps, treeJumps, fourJumps, fiveJumps };
+            SystemInfo[][] q = { (SystemInfo[]) current, oneJump, twoJumps, threeJumps, fourJumps, fiveJumps };
 
             gViewer.Graph = null;
             Graph graph = new Graph("graph");

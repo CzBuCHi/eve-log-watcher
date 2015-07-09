@@ -33,6 +33,7 @@ namespace eve_log_watcher
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.comboBoxSystems = new System.Windows.Forms.ComboBox();
             this.buttonRefresh = new System.Windows.Forms.Button();
             this.labelChannels = new System.Windows.Forms.Label();
             this.labelCurentSystem = new System.Windows.Forms.Label();
@@ -75,6 +76,7 @@ namespace eve_log_watcher
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.comboBoxSystems);
             this.panelTop.Controls.Add(this.buttonRefresh);
             this.panelTop.Controls.Add(this.labelChannels);
             this.panelTop.Controls.Add(this.labelCurentSystem);
@@ -88,6 +90,18 @@ namespace eve_log_watcher
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(1276, 39);
             this.panelTop.TabIndex = 4;
+            // 
+            // comboBoxSystems
+            // 
+            this.comboBoxSystems.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            this.comboBoxSystems.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
+            this.comboBoxSystems.DisplayMember = "SolarsystemName";
+            this.comboBoxSystems.FormattingEnabled = true;
+            this.comboBoxSystems.Location = new System.Drawing.Point(635, 11);
+            this.comboBoxSystems.Name = "comboBoxSystems";
+            this.comboBoxSystems.Size = new System.Drawing.Size(134, 21);
+            this.comboBoxSystems.TabIndex = 10;
+            this.comboBoxSystems.SelectedIndexChanged += new System.EventHandler(this.comboBoxSystems_SelectedIndexChanged);
             // 
             // buttonRefresh
             // 
@@ -128,9 +142,9 @@ namespace eve_log_watcher
             this.labelWarning.ForeColor = System.Drawing.Color.DarkRed;
             this.labelWarning.Location = new System.Drawing.Point(180, 12);
             this.labelWarning.Name = "labelWarning";
-            this.labelWarning.Size = new System.Drawing.Size(359, 17);
+            this.labelWarning.Size = new System.Drawing.Size(300, 17);
             this.labelWarning.TabIndex = 6;
-            this.labelWarning.Text = "Dont know where u are ... please use stargate :)";
+            this.labelWarning.Text = "Dont know where u are ... please select:";
             // 
             // comboLogs
             // 
@@ -274,6 +288,7 @@ namespace eve_log_watcher
         private System.Windows.Forms.Label labelWarning;
         private System.Windows.Forms.Label labelChannels;
         private System.Windows.Forms.Button buttonRefresh;
+        private System.Windows.Forms.ComboBox comboBoxSystems;
     }
 }
 
