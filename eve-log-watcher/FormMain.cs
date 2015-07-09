@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using eve_log_watcher.controls;
+using eve_log_watcher.model;
 using eve_log_watcher.Properties;
 
 namespace eve_log_watcher
@@ -40,14 +41,16 @@ namespace eve_log_watcher
             comboLogs.SelectedItem = Settings.Default.intelLogName;
             this.comboLogs.SelectedIndexChanged += comboLogs_SelectedIndexChanged;
 
+            comboBoxSystems.DataSource = DbHelper.DataContext.SolarSystems.ToArray();
             if (Settings.Default.currentSystemId == 0) {
                 labelCurentSystem.Visible = false;
-                labelWarning.Visible = true;
+                labelWarning.Visible = true;                
             } else {
                 map.CurrentSystemName = DbHelper.DataContext.SolarSystems.Where(o => o.Id == Settings.Default.currentSystemId).Select(o => o.SolarsystemName).FirstOrDefault();
                 labelCurentSystem.Text = map.CurrentSystemName;
                 labelCurentSystem.Visible = true;
                 labelWarning.Visible = false;
+                comboBoxSystems.SelectedText = map.CurrentSystemName;
             }
         }
 
@@ -188,6 +191,16 @@ namespace eve_log_watcher
 
         private void map_SizeChanged(object sender, EventArgs e) {
             ClientSize = new Size(ClientSize.Width, map.Height + panelTop.Height);
+        }
+
+        private void comboBoxSystems_SelectedIndexChanged(object sender, EventArgs e) {
+            SolarSystem solarSystem = (SolarSystem) comboBoxSystems.SelectedItem;
+            Settings.Default.currentSystemId = solarSystem.Id;
+
+            map.CurrentSystemName = solarSystem.SolarsystemName;
+            labelCurentSystem.Text = solarSystem.SolarsystemName;
+            labelCurentSystem.Visible = true;
+            labelWarning.Visible = false;
         }
     }
 }

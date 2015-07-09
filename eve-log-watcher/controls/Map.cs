@@ -72,16 +72,39 @@ namespace eve_log_watcher.controls
                                               where o.SolarsystemName == _CurrentSystemName
                                               select new SystemInfo { Id = o.Id, Name = o.SolarsystemName };
 
+            
             current = current.ToArray();
+            IEnumerable<SystemInfo> total = current;
             SystemInfo[] oneJump = getConnected(current).ToArray();
+            total = total.Union(oneJump);
             SystemInfo[] twoJumps = getConnected(oneJump).ToArray();
-            SystemInfo[] treeJumps = getConnected(twoJumps).ToArray();
-            SystemInfo[] fourJumps = getConnected(treeJumps).ToArray();
-            SystemInfo[] fiveJumps = getConnected(fourJumps).ToArray();
+            total = total.Union(twoJumps);
 
-            Dictionary<int, SystemInfo> infos = current.Union(oneJump).Union(twoJumps).Union(treeJumps).Union(fourJumps).Union(fiveJumps).ToDictionary(o => o.Id);
+            SystemInfo[] threeJumps = null;
+            SystemInfo[] fourJumps = null;
+            SystemInfo[] fiveJumps = null;
+            if (twoJumps.Length < 15) {
+                threeJumps = getConnected(twoJumps).ToArray();
+                total = total.Union(threeJumps);
 
-            SystemInfo[][] q = { (SystemInfo[]) current, oneJump, twoJumps, treeJumps, fourJumps, fiveJumps };
+                if (threeJumps.Length < 15) {
+                    fourJumps = getConnected(threeJumps).ToArray();
+                    total = total.Union(fourJumps);
+
+                    if (fourJumps.Length < 15) {
+                        fiveJumps = getConnected(fourJumps).ToArray();
+                        total = total.Union(fiveJumps);
+                    }
+                }
+            }
+            SystemInfo[] zero = new SystemInfo[0];
+            threeJumps = threeJumps ?? zero;
+            fourJumps = fourJumps ?? zero;
+            fiveJumps = fiveJumps ?? zero;
+
+            Dictionary<int, SystemInfo> infos = total.ToDictionary(o => o.Id);
+
+            SystemInfo[][] q = { (SystemInfo[]) current, oneJump, twoJumps, threeJumps, fourJumps, fiveJumps };
 
             gViewer.Graph = null;
             Graph graph = new Graph("graph");

@@ -3,3 +3,5 @@
 .vs
 bin
 obj
+/binary/eve-log-watcher.db3
+/binary/eve-log-watcher.pdb
