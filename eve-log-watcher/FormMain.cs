@@ -79,26 +79,26 @@ namespace eve_log_watcher
         }
 
         private void logWatcherLocal_ProcessNewData(object sender, ProcessNewDataEventArgs e) {
-            string currentSystem = null;
+            string currentSystemName = null;
             foreach (string line in e.Lines) {
                 int index = line.IndexOf("Channel changed to Local", StringComparison.OrdinalIgnoreCase);
                 if (index != -1) {
                     index = line.TrimEnd().LastIndexOf(' ');
-                    currentSystem = line.Substring(index + 1);
+                    currentSystemName = line.Substring(index + 1);
                 }
             }
-            if (currentSystem != null) {
-                IQueryable<int?> q = from o in DbHelper.DataContext.SolarSystems
-                                     where o.SolarSystemName == currentSystem
-                                     select (int?) o.Id;
+            if (currentSystemName != null) {
+                IQueryable<SolarSystem> q = from o in DbHelper.DataContext.SolarSystems
+                                     where o.SolarSystemName == currentSystemName
+                                            select o;
 
-                int? currentSystemId = q.FirstOrDefault();
-                if (currentSystemId != null) {
-                    Settings.Default.currentSystemId = currentSystemId.Value;
-                    map.CurrentSystemName = currentSystem;
+                SolarSystem solarSystem = q.FirstOrDefault();
+                if (solarSystem != null) {
+                    Settings.Default.currentSystemId = solarSystem.Id;
+                    map.CurrentSystemName = solarSystem.SolarSystemName;
                     labelCurentSystem.Text = map.CurrentSystemName;
                     _ComboBoxSystemsSetValue = true;
-                    comboBoxSystems.SelectedText = map.CurrentSystemName;
+                    comboBoxSystems.SelectedItem = solarSystem;
                     _ComboBoxSystemsSetValue = false; 
                     labelCurentSystem.Visible = true;
                     labelWarning.Visible = false;
