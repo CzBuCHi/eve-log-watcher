@@ -3,7 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using Microsoft.Msagl.Core.Layout;
+using Microsoft.Msagl.Core.Routing;
 using Microsoft.Msagl.Drawing;
+using Edge = Microsoft.Msagl.Drawing.Edge;
+using Node = Microsoft.Msagl.Drawing.Node;
 
 namespace eve_log_watcher.controls
 {
@@ -67,7 +71,10 @@ namespace eve_log_watcher.controls
 
             gViewer.Graph = null;
             Graph graph = new Graph("graph");
-
+            graph.LayoutAlgorithmSettings.EdgeRoutingSettings.EdgeRoutingMode = EdgeRoutingMode.SugiyamaSplines;
+            graph.LayoutAlgorithmSettings.EdgeRoutingSettings.RouteMultiEdgesAsBundles = true;
+            graph.LayoutAlgorithmSettings.PackingMethod = PackingMethod.Compact;
+            
             Dictionary<string, HashSet<string>> dict = new Dictionary<string, HashSet<string>>();
 
             lock (_Nodes) {
@@ -138,27 +145,27 @@ namespace eve_log_watcher.controls
             SystemInfo[] oneJump = getConnected(current).ToArray();
             total = total.Union(oneJump).ToArray();
 
-            SystemInfo[] twoJumps = getConnected(oneJump).Except(total).Distinct().ToArray();
+            SystemInfo[] twoJumps = getConnected(oneJump).ToArray();
             total = total.Union(twoJumps).ToArray();
 
-            SystemInfo[] threeJumps = getConnected(twoJumps).Except(total).Distinct().ToArray();
-            if (twoJumps.Length > cMaxSystems) {
+            SystemInfo[] threeJumps = getConnected(twoJumps).ToArray();
+            if (twoJumps.Length - total.Length > cMaxSystems) {
                 foreach (SystemInfo info in threeJumps) {
                     info.ShowName = false;
                 }
             }
             total = total.Union(threeJumps).ToArray();
 
-            SystemInfo[] fourJumps = getConnected(threeJumps).Except(total).Distinct().ToArray();
-            if (twoJumps.Length > cMaxSystems || threeJumps.Length > cMaxSystems) {
+            SystemInfo[] fourJumps = getConnected(threeJumps).ToArray();
+            if (twoJumps.Length - total.Length > cMaxSystems || threeJumps.Length - total.Length > cMaxSystems) {
                 foreach (SystemInfo info in fourJumps) {
                     info.ShowName = false;
                 }
             }
             total = total.Union(fourJumps).ToArray();
 
-            SystemInfo[] fiveJumps = getConnected(fourJumps).Except(total).Distinct().ToArray();
-            if (twoJumps.Length > cMaxSystems || threeJumps.Length > cMaxSystems || fourJumps.Length > cMaxSystems) {
+            SystemInfo[] fiveJumps = getConnected(fourJumps).ToArray();
+            if (twoJumps.Length - total.Length > cMaxSystems || threeJumps.Length - total.Length > cMaxSystems || fourJumps.Length - total.Length > cMaxSystems) {
                 foreach (SystemInfo info in fiveJumps) {
                     info.ShowName = false;
                 }
