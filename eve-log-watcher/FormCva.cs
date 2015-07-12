@@ -1,20 +1,15 @@
-﻿using eve_log_watcher.cva_kos_api;
-using EveAI.Live;
-using EveAI.Live.Character;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using System.Xml;
-using System.Xml.Linq;
+using eve_log_watcher.cva_kos_api;
+using EveAI.Live;
+using EveAI.Live.Character;
 
 namespace eve_log_watcher
 {
@@ -26,13 +21,13 @@ namespace eve_log_watcher
         private FormCva() {
             InitializeComponent();
             _DataTable = new DataTable();
-            _DataTable.Columns.Add("PilotName", typeof(string));
-            _DataTable.Columns.Add("PilotKos", typeof(bool));
-            _DataTable.Columns.Add("CorporationName", typeof(string));
-            _DataTable.Columns.Add("CorporationKos", typeof(bool));
-            _DataTable.Columns.Add("AllianceName", typeof(string));
-            _DataTable.Columns.Add("AllianceKos", typeof(bool));
-            _DataTable.Columns.Add("Kos", typeof(bool));
+            _DataTable.Columns.Add("PilotName", typeof (string));
+            _DataTable.Columns.Add("PilotKos", typeof (bool));
+            _DataTable.Columns.Add("CorporationName", typeof (string));
+            _DataTable.Columns.Add("CorporationKos", typeof (bool));
+            _DataTable.Columns.Add("AllianceName", typeof (string));
+            _DataTable.Columns.Add("AllianceKos", typeof (bool));
+            _DataTable.Columns.Add("Kos", typeof (bool));
 
             dataGridCva.DataSource = _DataTable;
         }
@@ -58,7 +53,7 @@ namespace eve_log_watcher
             Text = @"KOS: " + kosCount;
             _Form.dataGridCva.DataSource = _Form._DataTable;
 
-            Height = Math.Min(dataGridCva.Rows.Count * (dataGridCva.RowTemplate.Height + dataGridCva.RowTemplate.DividerHeight), 500) + 70;
+            Height = Math.Min(dataGridCva.Rows.Count*(dataGridCva.RowTemplate.Height + dataGridCva.RowTemplate.DividerHeight), 500) + 70;
             Width = Math.Max(dataGridCva.Columns.Cast<DataGridViewColumn>().Where(c => c.Visible).Sum(c => c.Width + c.DividerWidth), 300) + 40;
         }
 
@@ -67,15 +62,15 @@ namespace eve_log_watcher
             Color redSelected = Color.FromArgb(250, 127, 113);
 
             foreach (DataGridViewRow row in dataGridCva.Rows) {
-                if ((bool)row.Cells[colPilotKos.Name].Value) {
+                if ((bool) row.Cells[colPilotKos.Name].Value) {
                     row.Cells[colPilotName.Name].Style.BackColor = red;
                     row.Cells[colPilotName.Name].Style.SelectionBackColor = redSelected;
                 }
-                if ((bool)row.Cells[colCorporationKos.Name].Value) {
+                if ((bool) row.Cells[colCorporationKos.Name].Value) {
                     row.Cells[colCorporationName.Name].Style.BackColor = red;
                     row.Cells[colCorporationName.Name].Style.SelectionBackColor = redSelected;
                 }
-                if ((bool)row.Cells[colAllianceKos.Name].Value) {
+                if ((bool) row.Cells[colAllianceKos.Name].Value) {
                     row.Cells[colAllianceName.Name].Style.BackColor = red;
                     row.Cells[colAllianceName.Name].Style.SelectionBackColor = redSelected;
                 }
@@ -101,7 +96,8 @@ namespace eve_log_watcher
             public List<string> Names { get; set; }
         }
 
-        private static bool _FillingDataTable = false;
+        private static bool _FillingDataTable;
+
         private static void FillDataTable() {
             if (_FillingDataTable) {
                 return;
@@ -118,11 +114,11 @@ namespace eve_log_watcher
                     return;
                 }
 
-                _Form.AfterFillDataTable((int)args.Result);
+                _Form.AfterFillDataTable((int) args.Result);
                 _FillingDataTable = false;
             };
 
-            var names = Clipboard.GetText().Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            List<string> names = Clipboard.GetText().Split(new[] {'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries).ToList();
             worker.RunWorkerAsync(new FillDataTableArg {
                 Table = _Form._DataTable,
                 Names = names
@@ -130,7 +126,7 @@ namespace eve_log_watcher
         }
 
         private static void FillDataTable(object sender, DoWorkEventArgs args) {
-            args.Result = KosChecker.FillDataTable((FillDataTableArg)args.Argument);
+            args.Result = KosChecker.FillDataTable((FillDataTableArg) args.Argument);
         }
 
         private static class KosChecker
@@ -148,7 +144,7 @@ namespace eve_log_watcher
                 Dictionary<string, long> dict = _Api.ConvertNamesToIDs(arg.Names);
 
                 int kosCounter = 0;
-                foreach (var pair in dict) {
+                foreach (KeyValuePair<string, long> pair in dict) {
                     if (pair.Value == 0) {
                         continue;
                     }
@@ -202,24 +198,21 @@ namespace eve_log_watcher
                 CvaAllianceInfo allianceInfo = null;
 
                 switch (type) {
-                    case IdType.Character:
-                    {
+                    case IdType.Character: {
                         if (!_KosCharacters.TryGetValue(id, out kos)) {
                             characterInfo = CvaClient.GetCharacterInfo(id, name);
                             kos = characterInfo.Kos;
                         }
                         break;
                     }
-                    case IdType.Corporation:
-                    {
+                    case IdType.Corporation: {
                         if (!_KosCorporations.TryGetValue(id, out kos)) {
                             corpInfo = CvaClient.GetCorpInfo(id, name);
                             kos = corpInfo.Kos;
                         }
                         break;
                     }
-                    case IdType.Alliance:
-                    {
+                    case IdType.Alliance: {
                         if (!_KosAlliances.TryGetValue(id, out kos)) {
                             allianceInfo = CvaClient.GetAllianceInfo(id, name);
                             kos = allianceInfo.Kos;
@@ -228,15 +221,17 @@ namespace eve_log_watcher
                     }
                 }
 
-                if (characterInfo != null) {
+                if (characterInfo != null && !_KosCharacters.ContainsKey(characterInfo.EveId)) {
                     _KosCharacters.Add(characterInfo.EveId, characterInfo.Kos);
                     corpInfo = characterInfo.Corp;
                 }
-                if (corpInfo != null) {
+
+                if (corpInfo != null && !_KosCorporations.ContainsKey(corpInfo.EveId)) {
                     _KosCorporations.Add(corpInfo.EveId, corpInfo.Kos);
                     allianceInfo = corpInfo.Alliance;
                 }
-                if (allianceInfo != null) {
+
+                if (allianceInfo != null && !_KosAlliances.ContainsKey(allianceInfo.EveId)) {
                     _KosAlliances.Add(allianceInfo.EveId, allianceInfo.Kos);
                 }
 

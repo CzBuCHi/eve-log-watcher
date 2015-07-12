@@ -17,7 +17,7 @@ namespace eve_log_watcher
         private readonly KeyboardHook _Hook = new KeyboardHook();
         private FormCva _FormCva;
         private bool _ComboBoxSystemsSetValue;
-
+        private const Keys cModifiers = Keys.Control | Keys.Shift | Keys.Alt;
         public FormMain() {
             InitializeComponent();
 
@@ -26,15 +26,11 @@ namespace eve_log_watcher
             Left = bounds.Left;
             Width = bounds.Width;
 
-
             _CitadelLogs = new DataTable();
             _CitadelLogs.Columns.Add("Text", typeof (string));
             _CitadelLogs.Columns.Add("System", typeof (string));
 
             dataGridIntel.DataSource = _CitadelLogs;
-
-            _Hook.RegisterHotKey(eve_log_watcher.ModifierKeys.Control, Keys.F);
-            _Hook.KeyPressed += HookOnKeyPressed;
 
             logWatcherIntel.LogName = Settings.Default.intelLogName;
 
@@ -45,19 +41,18 @@ namespace eve_log_watcher
             _ComboBoxSystemsSetValue = true;
             comboBoxSystems.DataSource = DbHelper.DataContext.SolarSystems.ToArray();
             _ComboBoxSystemsSetValue = false;
-            if (Settings.Default.currentSystemId == 0) {
-                labelCurentSystem.Visible = false;
-                labelWarning.Visible = true;                
-            } else {
+            if (Settings.Default.currentSystemId != 0) {
                 SolarSystem solarSystem = DbHelper.DataContext.SolarSystems.First(o => o.Id == Settings.Default.currentSystemId);
                 map.CurrentSystemName = solarSystem.SolarSystemName;
-                labelCurentSystem.Text = map.CurrentSystemName;
-                labelCurentSystem.Visible = true;
-                labelWarning.Visible = false;
                 _ComboBoxSystemsSetValue = true;
                 comboBoxSystems.SelectedItem = solarSystem;
                 _ComboBoxSystemsSetValue = false;
             }
+
+            
+            hotkeyControlKosCheck.Hotkey = Settings.Default.kosCheckKey & ~cModifiers;
+            hotkeyControlKosCheck.HotkeyModifiers = Settings.Default.kosCheckKey & cModifiers;
+            InitHook();
         }
 
         private void HookOnKeyPressed(object sender, KeyPressedEventArgs keyPressedEventArgs) {
@@ -96,12 +91,9 @@ namespace eve_log_watcher
                 if (solarSystem != null) {
                     Settings.Default.currentSystemId = solarSystem.Id;
                     map.CurrentSystemName = solarSystem.SolarSystemName;
-                    labelCurentSystem.Text = map.CurrentSystemName;
                     _ComboBoxSystemsSetValue = true;
                     comboBoxSystems.SelectedItem = solarSystem;
-                    _ComboBoxSystemsSetValue = false; 
-                    labelCurentSystem.Visible = true;
-                    labelWarning.Visible = false;
+                    _ComboBoxSystemsSetValue = false;
                 }                
             }
         }
@@ -208,11 +200,19 @@ namespace eve_log_watcher
             }
             SolarSystem solarSystem = (SolarSystem) comboBoxSystems.SelectedItem;
             Settings.Default.currentSystemId = solarSystem.Id;
-
             map.CurrentSystemName = solarSystem.SolarSystemName;
-            labelCurentSystem.Text = solarSystem.SolarSystemName;
-            labelCurentSystem.Visible = true;
-            labelWarning.Visible = false;
+        }
+
+        private void InitHook() {
+            _Hook.KeyPressed -= HookOnKeyPressed;
+            _Hook.UnregisterHotKey();            
+            _Hook.RegisterHotKey(Settings.Default.kosCheckKey);
+            _Hook.KeyPressed += HookOnKeyPressed;
+        }
+
+        private void buttonHotkeyChangeConfirm_Click(object sender, EventArgs e) {
+            Settings.Default.kosCheckKey = (hotkeyControlKosCheck.Hotkey & ~cModifiers) | (hotkeyControlKosCheck.HotkeyModifiers & cModifiers);
+            InitHook();
         }
     }
 }

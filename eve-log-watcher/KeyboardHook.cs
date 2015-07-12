@@ -7,26 +7,45 @@ namespace eve_log_watcher
     public sealed class KeyboardHook : IDisposable
     {
         private readonly Window _Window = new Window();
-        private int _CurrentId;
+        private const int cCurrentId = 1697536;
 
         public KeyboardHook() {
-            _Window.KeyPressed += delegate(object sender, KeyPressedEventArgs args) { KeyPressed?.Invoke(this, args); };
+            _Window.KeyPressed += delegate(object sender, KeyPressedEventArgs args) {
+                KeyPressed?.Invoke(this, args);
+            };
         }
 
         public void Dispose() {
-            for (int i = _CurrentId; i > 0; i--) {
+            for (int i = cCurrentId; i > 0; i--) {
                 UnregisterHotKey(_Window.Handle, i);
             }
 
             _Window.Dispose();
         }
 
-        public void RegisterHotKey(ModifierKeys modifier, Keys key) {
-            _CurrentId = _CurrentId + 1;
+        public void RegisterHotKey(Keys key) {
+            ModifierKeys modifier = ModifierKeys.None;
 
-            if (!RegisterHotKey(_Window.Handle, _CurrentId, (uint) modifier, (uint) key)) {
+            if ((key & Keys.Alt) == Keys.Alt) {
+                modifier |= ModifierKeys.Alt;
+                key = key & ~Keys.Alt;
+            }
+            if ((key & Keys.Control) == Keys.Control) {
+                modifier |= ModifierKeys.Control;
+                key = key & ~Keys.Control;
+            }
+            if ((key & Keys.Shift) == Keys.Shift) {
+                modifier |= ModifierKeys.Shift;
+                key = key & ~Keys.Shift;
+            }
+
+            if (!RegisterHotKey(_Window.Handle, cCurrentId, (uint) modifier, (uint) key)) {
                 throw new InvalidOperationException("Couldn’t register the hot key.");
             }
+        }
+
+        public void UnregisterHotKey() {
+            UnregisterHotKey(_Window.Handle, cCurrentId);
         }
 
         public event EventHandler<KeyPressedEventArgs> KeyPressed;
@@ -39,7 +58,8 @@ namespace eve_log_watcher
 
         private sealed class Window : NativeWindow, IDisposable
         {
-            private static readonly int WM_HOTKEY = 0x0312;
+            // ReSharper disable once InconsistentNaming
+            private const int WM_HOTKEY = 0x0312;
 
             public Window() {
                 CreateHandle(new CreateParams());
@@ -52,11 +72,25 @@ namespace eve_log_watcher
             protected override void WndProc(ref Message m) {
                 base.WndProc(ref m);
 
-                if (m.Msg == WM_HOTKEY) {
-                    Keys key = (Keys) (((int) m.LParam >> 16) & 0xFFFF);
-                    ModifierKeys modifier = (ModifierKeys) ((int) m.LParam & 0xFFFF);
-                    KeyPressed?.Invoke(this, new KeyPressedEventArgs(modifier, key));
+                if (m.Msg != WM_HOTKEY) {
+                    return;
                 }
+
+                Keys key = (Keys) (((int) m.LParam >> 16) & 0xFFFF);
+                ModifierKeys modifier = (ModifierKeys) ((int) m.LParam & 0xFFFF);
+
+                if ((modifier & ModifierKeys.Alt) == ModifierKeys.Alt) {
+                    key = key | Keys.Alt;
+                }
+                if ((modifier & ModifierKeys.Control) == ModifierKeys.Control) {
+                    key = key | Keys.Control;
+                }
+                if ((modifier & ModifierKeys.Shift) == ModifierKeys.Shift) {                        
+                    key = key | Keys.Shift;
+                }
+
+
+                KeyPressed?.Invoke(this, new KeyPressedEventArgs(key));
             }
 
             public event EventHandler<KeyPressedEventArgs> KeyPressed;
@@ -65,14 +99,12 @@ namespace eve_log_watcher
 
     public class KeyPressedEventArgs : EventArgs
     {
-        internal KeyPressedEventArgs(ModifierKeys modifier, Keys key) {
-            Modifier = modifier;
+        internal KeyPressedEventArgs(Keys key) {
             Key = key;
         }
 
         // ReSharper disable UnusedAutoPropertyAccessor.Global
         // ReSharper disable MemberCanBePrivate.Global
-        public ModifierKeys Modifier { get; }
         public Keys Key { get; }
         // ReSharper restore UnusedAutoPropertyAccessor.Global
         // ReSharper restore MemberCanBePrivate.Global
@@ -81,11 +113,10 @@ namespace eve_log_watcher
     [Flags]
     public enum ModifierKeys : uint
     {
-        // ReSharper disable UnusedMember.Global
+        None = 0,
         Alt = 1,
         Control = 2,
         Shift = 4,
         Win = 8
-        // ReSharper restore UnusedMember.Global
     }
 }

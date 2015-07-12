@@ -46,5 +46,17 @@ namespace eve_log_watcher.Properties {
                 this["intelLogName"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("F")]
+        public global::System.Windows.Forms.Keys kosCheckKey {
+            get {
+                return ((global::System.Windows.Forms.Keys)(this["kosCheckKey"]));
+            }
+            set {
+                this["kosCheckKey"] = value;
+            }
+        }
     }
 }

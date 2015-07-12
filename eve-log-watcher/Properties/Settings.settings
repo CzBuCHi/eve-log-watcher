@@ -8,5 +8,8 @@
     <Setting Name="intelLogName" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="kosCheckKey" Type="System.Windows.Forms.Keys" Scope="User">
+      <Value Profile="(Default)">F</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

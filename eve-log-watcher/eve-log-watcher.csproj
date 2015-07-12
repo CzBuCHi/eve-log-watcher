@@ -98,6 +98,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="controls\HotkeyControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="controls\Map.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -175,6 +178,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
+    <None Include="Resources\confirm.png" />
     <None Include="Resources\refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
