@@ -62,21 +62,6 @@ namespace eve_log_watcher
             Width = Math.Max(dataGridCva.Columns.Cast<DataGridViewColumn>().Where(c => c.Visible).Sum(c => c.Width + c.DividerWidth), 300) + 40;
         }
 
-        private static string GetValue(XElement xElement) {
-            if (xElement.HasElements) {
-                return string.Concat(xElement.DescendantNodes().Where(node => node.NodeType == XmlNodeType.Text));
-            }
-            return xElement.Value;
-        }
-
-        private static bool GetIsKos(XElement xElement) {
-            XElement xButton = xElement.Element("button");
-            if (xButton == null) {
-                return false;
-            }
-            return xButton.Attribute("class").Value.IndexOf("btn-danger", StringComparison.Ordinal) != -1;
-        }
-
         private void dataGridCva_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e) {
             Color red = Color.FromArgb(250, 172, 163);
             Color redSelected = Color.FromArgb(250, 127, 113);
@@ -151,9 +136,9 @@ namespace eve_log_watcher
         private static class KosChecker
         {
             private static EveApi _Api;
-            private static Dictionary<long, bool> kosCharacters = new Dictionary<long, bool>();
-            private static Dictionary<long, bool> kosCorporations = new Dictionary<long, bool>();
-            private static Dictionary<long, bool> kosAlliances = new Dictionary<long, bool>();
+            private static readonly Dictionary<long, bool> _KosCharacters = new Dictionary<long, bool>();
+            private static readonly Dictionary<long, bool> _KosCorporations = new Dictionary<long, bool>();
+            private static readonly Dictionary<long, bool> _KosAlliances = new Dictionary<long, bool>();
 
             public static int FillDataTable(FillDataTableArg arg) {
                 if (_Api == null) {
@@ -219,24 +204,24 @@ namespace eve_log_watcher
                 switch (type) {
                     case IdType.Character:
                     {
-                        if (!kosCharacters.TryGetValue(id, out kos)) {
-                            characterInfo = CvaClient.GetCharacterInfo(name);
+                        if (!_KosCharacters.TryGetValue(id, out kos)) {
+                            characterInfo = CvaClient.GetCharacterInfo(id, name);
                             kos = characterInfo.Kos;
                         }
                         break;
                     }
                     case IdType.Corporation:
                     {
-                        if (!kosCorporations.TryGetValue(id, out kos)) {
-                            corpInfo = CvaClient.GetCorpInfo(name);
+                        if (!_KosCorporations.TryGetValue(id, out kos)) {
+                            corpInfo = CvaClient.GetCorpInfo(id, name);
                             kos = corpInfo.Kos;
                         }
                         break;
                     }
                     case IdType.Alliance:
                     {
-                        if (!kosAlliances.TryGetValue(id, out kos)) {
-                            allianceInfo = CvaClient.GetAllianceInfo(name);
+                        if (!_KosAlliances.TryGetValue(id, out kos)) {
+                            allianceInfo = CvaClient.GetAllianceInfo(id, name);
                             kos = allianceInfo.Kos;
                         }
                         break;
@@ -244,15 +229,15 @@ namespace eve_log_watcher
                 }
 
                 if (characterInfo != null) {
-                    kosCharacters.Add(characterInfo.EveId, characterInfo.Kos);
+                    _KosCharacters.Add(characterInfo.EveId, characterInfo.Kos);
                     corpInfo = characterInfo.Corp;
                 }
                 if (corpInfo != null) {
-                    kosCorporations.Add(corpInfo.EveId, corpInfo.Kos);
+                    _KosCorporations.Add(corpInfo.EveId, corpInfo.Kos);
                     allianceInfo = corpInfo.Alliance;
                 }
                 if (allianceInfo != null) {
-                    kosAlliances.Add(allianceInfo.EveId, allianceInfo.Kos);
+                    _KosAlliances.Add(allianceInfo.EveId, allianceInfo.Kos);
                 }
 
                 return kos;
