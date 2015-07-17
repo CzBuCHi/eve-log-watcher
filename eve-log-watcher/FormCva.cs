@@ -16,20 +16,20 @@ namespace eve_log_watcher
     public partial class FormCva : Form
     {
         private static readonly FormCva _Form = new FormCva();
-        private readonly DataTable _DataTable;
+        public readonly DataTable DataTable;
 
         private FormCva() {
             InitializeComponent();
-            _DataTable = new DataTable();
-            _DataTable.Columns.Add("PilotName", typeof (string));
-            _DataTable.Columns.Add("PilotKos", typeof (bool));
-            _DataTable.Columns.Add("CorporationName", typeof (string));
-            _DataTable.Columns.Add("CorporationKos", typeof (bool));
-            _DataTable.Columns.Add("AllianceName", typeof (string));
-            _DataTable.Columns.Add("AllianceKos", typeof (bool));
-            _DataTable.Columns.Add("Kos", typeof (bool));
+            DataTable = new DataTable();
+            DataTable.Columns.Add("PilotName", typeof (string));
+            DataTable.Columns.Add("PilotKos", typeof (bool));
+            DataTable.Columns.Add("CorporationName", typeof (string));
+            DataTable.Columns.Add("CorporationKos", typeof (bool));
+            DataTable.Columns.Add("AllianceName", typeof (string));
+            DataTable.Columns.Add("AllianceKos", typeof (bool));
+            DataTable.Columns.Add("Kos", typeof (bool));
 
-            dataGridCva.DataSource = _DataTable;
+            dataGridCva.DataSource = DataTable.DefaultView;
         }
 
         // ReSharper disable once MemberCanBePrivate.Global
@@ -51,7 +51,7 @@ namespace eve_log_watcher
             dataGridCva.Visible = true;
 
             Text = @"KOS: " + kosCount;
-            _Form.dataGridCva.DataSource = _Form._DataTable;
+            _Form.dataGridCva.DataSource = _Form.DataTable;
 
             Height = Math.Min(dataGridCva.Rows.Count*(dataGridCva.RowTemplate.Height + dataGridCva.RowTemplate.DividerHeight), 500) + 70;
             Width = Math.Max(dataGridCva.Columns.Cast<DataGridViewColumn>().Where(c => c.Visible).Sum(c => c.Width + c.DividerWidth), 300) + 40;
@@ -75,10 +75,11 @@ namespace eve_log_watcher
                     row.Cells[colAllianceName.Name].Style.SelectionBackColor = redSelected;
                 }
             }
-
-            DataGridViewColumn column = dataGridCva.Columns[colKos.Name];
-            Debug.Assert(column != null);
-            dataGridCva.Sort(column, ListSortDirection.Descending);
+            if (dataGridCva.SortedColumn == null) {
+                DataGridViewColumn column = dataGridCva.Columns[colKos.Name];
+                Debug.Assert(column != null);
+                dataGridCva.Sort(column, ListSortDirection.Descending);
+            }
         }
 
         private void FormCva_FormClosing(object sender, FormClosingEventArgs e) {
@@ -105,7 +106,7 @@ namespace eve_log_watcher
             _FillingDataTable = true;
             _Form.labelLoading.Visible = true;
             _Form.dataGridCva.Visible = false;
-            _Form._DataTable.Rows.Clear();
+            _Form.DataTable.Rows.Clear();
             BackgroundWorker worker = new BackgroundWorker();
             worker.DoWork += FillDataTable;
             worker.RunWorkerCompleted += (sender, args) => {
@@ -120,7 +121,7 @@ namespace eve_log_watcher
 
             List<string> names = Clipboard.GetText().Split(new[] {'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries).ToList();
             worker.RunWorkerAsync(new FillDataTableArg {
-                Table = _Form._DataTable,
+                Table = _Form.DataTable,
                 Names = names
             });
         }

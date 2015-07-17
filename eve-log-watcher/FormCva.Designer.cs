@@ -49,6 +49,9 @@
             this.dataGridCva.AllowUserToResizeRows = false;
             this.dataGridCva.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.dataGridCva.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.dataGridCva.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            this.dataGridCva.ColumnHeadersHeight = 30;
+            this.dataGridCva.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dataGridCva.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.colPilotName,
             this.colCorporationName,
@@ -81,7 +84,7 @@
             this.colPilotName.HeaderText = "PilotName";
             this.colPilotName.Name = "colPilotName";
             this.colPilotName.ReadOnly = true;
-            this.colPilotName.Width = 80;
+            this.colPilotName.Width = 79;
             // 
             // colCorporationName
             // 
@@ -95,7 +98,7 @@
             this.colCorporationName.HeaderText = "CorporationName";
             this.colCorporationName.Name = "colCorporationName";
             this.colCorporationName.ReadOnly = true;
-            this.colCorporationName.Width = 114;
+            this.colCorporationName.Width = 113;
             // 
             // colAllianceName
             // 
@@ -109,7 +112,7 @@
             this.colAllianceName.HeaderText = "AllianceName";
             this.colAllianceName.Name = "colAllianceName";
             this.colAllianceName.ReadOnly = true;
-            this.colAllianceName.Width = 97;
+            this.colAllianceName.Width = 96;
             // 
             // colPilotKos
             // 
@@ -117,8 +120,9 @@
             this.colPilotKos.HeaderText = "PilotKos";
             this.colPilotKos.Name = "colPilotKos";
             this.colPilotKos.ReadOnly = true;
+            this.colPilotKos.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.colPilotKos.Visible = false;
-            this.colPilotKos.Width = 51;
+            this.colPilotKos.Width = 70;
             // 
             // colCorporationKos
             // 
@@ -126,8 +130,9 @@
             this.colCorporationKos.HeaderText = "CorporationKos";
             this.colCorporationKos.Name = "colCorporationKos";
             this.colCorporationKos.ReadOnly = true;
+            this.colCorporationKos.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.colCorporationKos.Visible = false;
-            this.colCorporationKos.Width = 85;
+            this.colCorporationKos.Width = 104;
             // 
             // colAllianceKos
             // 
@@ -135,8 +140,9 @@
             this.colAllianceKos.HeaderText = "AllianceKos";
             this.colAllianceKos.Name = "colAllianceKos";
             this.colAllianceKos.ReadOnly = true;
+            this.colAllianceKos.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.colAllianceKos.Visible = false;
-            this.colAllianceKos.Width = 68;
+            this.colAllianceKos.Width = 87;
             // 
             // colKos
             // 
@@ -144,8 +150,9 @@
             this.colKos.HeaderText = "Kos";
             this.colKos.Name = "colKos";
             this.colKos.ReadOnly = true;
+            this.colKos.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.colKos.Visible = false;
-            this.colKos.Width = 31;
+            this.colKos.Width = 50;
             // 
             // labelLoading
             // 
@@ -167,7 +174,7 @@
             this.MinimumSize = new System.Drawing.Size(320, 100);
             this.Name = "FormCva";
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "http://local.cva-eve.org";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormCva_FormClosing);
@@ -180,6 +187,7 @@
         #endregion
 
         private System.Windows.Forms.DataGridView dataGridCva;
+        private System.Windows.Forms.Label labelLoading;
         private System.Windows.Forms.DataGridViewTextBoxColumn colPilotName;
         private System.Windows.Forms.DataGridViewTextBoxColumn colCorporationName;
         private System.Windows.Forms.DataGridViewTextBoxColumn colAllianceName;
@@ -187,6 +195,5 @@
         private System.Windows.Forms.DataGridViewCheckBoxColumn colCorporationKos;
         private System.Windows.Forms.DataGridViewCheckBoxColumn colAllianceKos;
         private System.Windows.Forms.DataGridViewCheckBoxColumn colKos;
-        private System.Windows.Forms.Label labelLoading;
     }
 }

@@ -57,10 +57,7 @@ namespace eve_log_watcher
 
         private void HookOnKeyPressed(object sender, KeyPressedEventArgs keyPressedEventArgs) {
             _FormCva = FormCva.ShowMe();
-            if (_FormCva != null) {
-                _FormCva.Top = Bottom;
-                _FormCva.Left = Left;
-            }
+            _FormCva.Owner = this;
         }
 
         protected override void OnClosing(CancelEventArgs e) {
