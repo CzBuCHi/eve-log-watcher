@@ -133,6 +133,8 @@ namespace eve_log_watcher
             comboLogs.Enabled = false;
             buttonStop.Enabled = true;
             buttonRefresh.Enabled = false;
+            buttonStart.Visible = false;
+            buttonStop.Visible = true;
         }
 
         private void buttonStop_Click(object sender, EventArgs e) {
@@ -143,6 +145,8 @@ namespace eve_log_watcher
             comboLogs.Enabled = true;
             buttonStart.Enabled = true;
             buttonRefresh.Enabled = true;
+            buttonStart.Visible = true;
+            buttonStop.Visible = false;
         }
 
         private static void WorkerOnDoWork(object sender, DoWorkEventArgs args) {
@@ -210,6 +214,18 @@ namespace eve_log_watcher
         private void buttonHotkeyChangeConfirm_Click(object sender, EventArgs e) {
             Settings.Default.kosCheckKey = (hotkeyControlKosCheck.Hotkey & ~cModifiers) | (hotkeyControlKosCheck.HotkeyModifiers & cModifiers);
             InitHook();
+        }
+
+        private void labelChannels_Click(object sender, EventArgs e) {
+
+        }
+
+        private void comboLogs_SelectedIndexChanged_1(object sender, EventArgs e) {
+
+        }
+
+        private void hotkeyControlKosCheck_TextChanged(object sender, EventArgs e) {
+
         }
     }
 }

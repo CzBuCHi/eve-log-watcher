@@ -34,11 +34,13 @@ namespace eve_log_watcher
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.buttonHotkeyChangeConfirm = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.labelTime = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.hotkeyControlKosCheck = new exscape.HotkeyControl();
             this.comboBoxSystems = new System.Windows.Forms.ComboBox();
+            this.buttonRefresh = new System.Windows.Forms.Button();
             this.labelChannels = new System.Windows.Forms.Label();
             this.comboLogs = new System.Windows.Forms.ComboBox();
             this.panelRight = new System.Windows.Forms.Panel();
@@ -49,8 +51,6 @@ namespace eve_log_watcher
             this.map = new eve_log_watcher.controls.Map();
             this.logWatcherLocal = new eve_log_watcher.controls.LogWatcher();
             this.logWatcherIntel = new eve_log_watcher.controls.LogWatcher();
-            this.buttonHotkeyChangeConfirm = new System.Windows.Forms.Button();
-            this.buttonRefresh = new System.Windows.Forms.Button();
             this.panelTop.SuspendLayout();
             this.panelRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridIntel)).BeginInit();
@@ -58,9 +58,9 @@ namespace eve_log_watcher
             // 
             // buttonStart
             // 
-            this.buttonStart.Location = new System.Drawing.Point(112, 8);
+            this.buttonStart.Location = new System.Drawing.Point(1182, 9);
             this.buttonStart.Name = "buttonStart";
-            this.buttonStart.Size = new System.Drawing.Size(80, 25);
+            this.buttonStart.Size = new System.Drawing.Size(55, 21);
             this.buttonStart.TabIndex = 1;
             this.buttonStart.Text = "Start";
             this.buttonStart.UseVisualStyleBackColor = true;
@@ -69,16 +69,19 @@ namespace eve_log_watcher
             // buttonStop
             // 
             this.buttonStop.Enabled = false;
-            this.buttonStop.Location = new System.Drawing.Point(198, 8);
+            this.buttonStop.Location = new System.Drawing.Point(1182, 9);
             this.buttonStop.Name = "buttonStop";
-            this.buttonStop.Size = new System.Drawing.Size(80, 25);
+            this.buttonStop.Size = new System.Drawing.Size(55, 21);
             this.buttonStop.TabIndex = 2;
             this.buttonStop.Text = "Stop";
             this.buttonStop.UseVisualStyleBackColor = true;
+            this.buttonStop.Visible = false;
             this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.buttonStop);
+            this.panelTop.Controls.Add(this.buttonStart);
             this.panelTop.Controls.Add(this.buttonHotkeyChangeConfirm);
             this.panelTop.Controls.Add(this.label2);
             this.panelTop.Controls.Add(this.labelTime);
@@ -88,18 +91,28 @@ namespace eve_log_watcher
             this.panelTop.Controls.Add(this.buttonRefresh);
             this.panelTop.Controls.Add(this.labelChannels);
             this.panelTop.Controls.Add(this.comboLogs);
-            this.panelTop.Controls.Add(this.buttonStart);
-            this.panelTop.Controls.Add(this.buttonStop);
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(1276, 39);
             this.panelTop.TabIndex = 4;
             // 
+            // buttonHotkeyChangeConfirm
+            // 
+            this.buttonHotkeyChangeConfirm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonHotkeyChangeConfirm.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.buttonHotkeyChangeConfirm.Location = new System.Drawing.Point(676, 9);
+            this.buttonHotkeyChangeConfirm.Name = "buttonHotkeyChangeConfirm";
+            this.buttonHotkeyChangeConfirm.Size = new System.Drawing.Size(48, 21);
+            this.buttonHotkeyChangeConfirm.TabIndex = 14;
+            this.buttonHotkeyChangeConfirm.Text = "Apply";
+            this.buttonHotkeyChangeConfirm.UseVisualStyleBackColor = true;
+            this.buttonHotkeyChangeConfirm.Click += new System.EventHandler(this.buttonHotkeyChangeConfirm_Click);
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(284, 14);
+            this.label2.Location = new System.Drawing.Point(103, 12);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(79, 13);
             this.label2.TabIndex = 13;
@@ -117,7 +130,7 @@ namespace eve_log_watcher
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(563, 14);
+            this.label1.Location = new System.Drawing.Point(382, 12);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(106, 13);
             this.label1.TabIndex = 12;
@@ -126,12 +139,13 @@ namespace eve_log_watcher
             // hotkeyControlKosCheck
             // 
             this.hotkeyControlKosCheck.Hotkey = System.Windows.Forms.Keys.F;
-            this.hotkeyControlKosCheck.HotkeyModifiers = System.Windows.Forms.Keys.Control;
-            this.hotkeyControlKosCheck.Location = new System.Drawing.Point(675, 9);
+            this.hotkeyControlKosCheck.HotkeyModifiers = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
+            this.hotkeyControlKosCheck.Location = new System.Drawing.Point(494, 10);
             this.hotkeyControlKosCheck.Name = "hotkeyControlKosCheck";
             this.hotkeyControlKosCheck.Size = new System.Drawing.Size(182, 20);
             this.hotkeyControlKosCheck.TabIndex = 11;
-            this.hotkeyControlKosCheck.Text = "Control + F";            
+            this.hotkeyControlKosCheck.Text = "Control + F";
+            this.hotkeyControlKosCheck.TextChanged += new System.EventHandler(this.hotkeyControlKosCheck_TextChanged);
             // 
             // comboBoxSystems
             // 
@@ -139,20 +153,33 @@ namespace eve_log_watcher
             this.comboBoxSystems.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.comboBoxSystems.DisplayMember = "SolarSystemName";
             this.comboBoxSystems.FormattingEnabled = true;
-            this.comboBoxSystems.Location = new System.Drawing.Point(369, 11);
+            this.comboBoxSystems.Location = new System.Drawing.Point(188, 9);
             this.comboBoxSystems.Name = "comboBoxSystems";
             this.comboBoxSystems.Size = new System.Drawing.Size(188, 21);
             this.comboBoxSystems.TabIndex = 10;
             this.comboBoxSystems.SelectedIndexChanged += new System.EventHandler(this.comboBoxSystems_SelectedIndexChanged);
             // 
+            // buttonRefresh
+            // 
+            this.buttonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonRefresh.BackgroundImage = global::eve_log_watcher.Properties.Resources.refresh;
+            this.buttonRefresh.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.buttonRefresh.Location = new System.Drawing.Point(1243, 9);
+            this.buttonRefresh.Name = "buttonRefresh";
+            this.buttonRefresh.Size = new System.Drawing.Size(21, 21);
+            this.buttonRefresh.TabIndex = 9;
+            this.buttonRefresh.UseVisualStyleBackColor = true;
+            this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
+            // 
             // labelChannels
             // 
             this.labelChannels.AutoSize = true;
-            this.labelChannels.Location = new System.Drawing.Point(881, 12);
+            this.labelChannels.Location = new System.Drawing.Point(872, 12);
             this.labelChannels.Name = "labelChannels";
             this.labelChannels.Size = new System.Drawing.Size(54, 13);
             this.labelChannels.TabIndex = 8;
             this.labelChannels.Text = "Channels:";
+            this.labelChannels.Click += new System.EventHandler(this.labelChannels_Click);
             // 
             // comboLogs
             // 
@@ -160,10 +187,11 @@ namespace eve_log_watcher
             | System.Windows.Forms.AnchorStyles.Right)));
             this.comboLogs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboLogs.FormattingEnabled = true;
-            this.comboLogs.Location = new System.Drawing.Point(941, 9);
+            this.comboLogs.Location = new System.Drawing.Point(932, 9);
             this.comboLogs.Name = "comboLogs";
-            this.comboLogs.Size = new System.Drawing.Size(296, 21);
+            this.comboLogs.Size = new System.Drawing.Size(244, 21);
             this.comboLogs.TabIndex = 5;
+            this.comboLogs.SelectedIndexChanged += new System.EventHandler(this.comboLogs_SelectedIndexChanged_1);
             // 
             // panelRight
             // 
@@ -247,30 +275,6 @@ namespace eve_log_watcher
             this.logWatcherIntel.LogName = "TheCitadel";
             this.logWatcherIntel.SynchronizingObject = this;
             this.logWatcherIntel.ProcessNewData += new System.EventHandler<eve_log_watcher.controls.ProcessNewDataEventArgs>(this.logWatcherIntel_ProcessNewData);
-            // 
-            // buttonHotkeyChangeConfirm
-            // 
-            this.buttonHotkeyChangeConfirm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonHotkeyChangeConfirm.BackgroundImage = global::eve_log_watcher.Properties.Resources.confirm;
-            this.buttonHotkeyChangeConfirm.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonHotkeyChangeConfirm.Location = new System.Drawing.Point(854, 8);
-            this.buttonHotkeyChangeConfirm.Name = "buttonHotkeyChangeConfirm";
-            this.buttonHotkeyChangeConfirm.Size = new System.Drawing.Size(21, 21);
-            this.buttonHotkeyChangeConfirm.TabIndex = 14;
-            this.buttonHotkeyChangeConfirm.UseVisualStyleBackColor = true;
-            this.buttonHotkeyChangeConfirm.Click += new System.EventHandler(this.buttonHotkeyChangeConfirm_Click);
-            // 
-            // buttonRefresh
-            // 
-            this.buttonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonRefresh.BackgroundImage = global::eve_log_watcher.Properties.Resources.refresh;
-            this.buttonRefresh.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonRefresh.Location = new System.Drawing.Point(1243, 9);
-            this.buttonRefresh.Name = "buttonRefresh";
-            this.buttonRefresh.Size = new System.Drawing.Size(21, 21);
-            this.buttonRefresh.TabIndex = 9;
-            this.buttonRefresh.UseVisualStyleBackColor = true;
-            this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
             // FormMain
             // 

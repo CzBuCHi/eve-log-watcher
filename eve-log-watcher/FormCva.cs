@@ -28,14 +28,13 @@ namespace eve_log_watcher
             DataTable.Columns.Add("AllianceName", typeof (string));
             DataTable.Columns.Add("AllianceKos", typeof (bool));
             DataTable.Columns.Add("Kos", typeof (bool));
-
-            dataGridCva.DataSource = DataTable.DefaultView;
         }
 
         // ReSharper disable once MemberCanBePrivate.Global
         public bool CanBeClosed { get; set; }
 
         public static FormCva ShowMe() {
+            _Form.Text = @"Loading ...";
             try {
                 FillDataTable();
             } catch (Exception exc) {
@@ -51,7 +50,10 @@ namespace eve_log_watcher
             dataGridCva.Visible = true;
 
             Text = @"KOS: " + kosCount;
-            _Form.dataGridCva.DataSource = _Form.DataTable;
+
+            _Form.dataGridCva.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.None;
+            _Form.dataGridCva.DataSource = _Form.DataTable.DefaultView;
+            _Form.dataGridCva.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
 
             Height = Math.Min(dataGridCva.Rows.Count*(dataGridCva.RowTemplate.Height + dataGridCva.RowTemplate.DividerHeight), 500) + 70;
             Width = Math.Max(dataGridCva.Columns.Cast<DataGridViewColumn>().Where(c => c.Visible).Sum(c => c.Width + c.DividerWidth), 300) + 40;
