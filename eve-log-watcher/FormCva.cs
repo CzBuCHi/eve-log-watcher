@@ -178,7 +178,7 @@ namespace eve_log_watcher
                     allianceKos = false;
                 } else {
                     corporationKos = IsKos(characterInfo.CorporationID, characterInfo.CorporationName, IdType.Corporation);
-                    allianceKos = (characterInfo.AllianceID == -1) ? false : IsKos(characterInfo.AllianceID, characterInfo.AllianceName, IdType.Alliance);
+                    allianceKos = (characterInfo.AllianceID != -1) && IsKos(characterInfo.AllianceID, characterInfo.AllianceName, IdType.Alliance);
                 }
                 bool kos = pilotKos || corporationKos || allianceKos;
 
