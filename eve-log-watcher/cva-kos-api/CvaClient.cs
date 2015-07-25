@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -51,11 +52,11 @@ namespace eve_log_watcher.cva_kos_api
 
             JArray jResults = (JArray) jObject["results"];
             TResult[] results = jResults.ToObject<TResult[]>();
-            return results[0];
+            return results.FirstOrDefault(o => o.EveId == eveId);
         }
 
         public static CvaCharacterInfo GetCharacterInfo(long eveId,string name) {
-            return GetInfo<CvaCharacterInfo>(eveId,name);
+            return GetInfo<CvaCharacterInfo>(eveId, name);
         }
 
         public static CvaCorporationInfo GetCorpInfo(long eveId, string name) {
