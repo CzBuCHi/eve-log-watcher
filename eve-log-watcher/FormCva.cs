@@ -204,21 +204,21 @@ namespace eve_log_watcher
                     case IdType.Character: {
                         if (!_KosCharacters.TryGetValue(id, out kos)) {
                             characterInfo = CvaClient.GetCharacterInfo(id, name);
-                            kos = characterInfo.Kos;
+                            kos = characterInfo?.Kos == true;
                         }
                         break;
                     }
                     case IdType.Corporation: {
                         if (!_KosCorporations.TryGetValue(id, out kos)) {
                             corpInfo = CvaClient.GetCorpInfo(id, name);
-                            kos = corpInfo.Kos;
+                            kos = corpInfo?.Kos == true;
                         }
                         break;
                     }
                     case IdType.Alliance: {
                         if (!_KosAlliances.TryGetValue(id, out kos)) {
                             allianceInfo = CvaClient.GetAllianceInfo(id, name);
-                            kos = allianceInfo.Kos;
+                            kos = allianceInfo?.Kos == true;
                         }
                         break;
                     }
