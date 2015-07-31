@@ -47,7 +47,7 @@
             this.dataGridCva.AllowUserToOrderColumns = true;
             this.dataGridCva.AllowUserToResizeColumns = false;
             this.dataGridCva.AllowUserToResizeRows = false;
-            this.dataGridCva.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.dataGridCva.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.dataGridCva.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.dataGridCva.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             this.dataGridCva.ColumnHeadersHeight = 30;
@@ -60,7 +60,6 @@
             this.colCorporationKos,
             this.colAllianceKos,
             this.colKos});
-            this.dataGridCva.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridCva.EnableHeadersVisualStyles = false;
             this.dataGridCva.Location = new System.Drawing.Point(0, 0);
             this.dataGridCva.MultiSelect = false;
@@ -68,7 +67,7 @@
             this.dataGridCva.ReadOnly = true;
             this.dataGridCva.RowHeadersVisible = false;
             this.dataGridCva.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridCva.Size = new System.Drawing.Size(304, 61);
+            this.dataGridCva.Size = new System.Drawing.Size(292, 134);
             this.dataGridCva.TabIndex = 4;
             this.dataGridCva.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.dataGridCva_DataBindingComplete);
             // 
@@ -156,10 +155,9 @@
             // 
             // labelLoading
             // 
-            this.labelLoading.AutoSize = true;
             this.labelLoading.Location = new System.Drawing.Point(12, 9);
             this.labelLoading.Name = "labelLoading";
-            this.labelLoading.Size = new System.Drawing.Size(57, 13);
+            this.labelLoading.Size = new System.Drawing.Size(280, 125);
             this.labelLoading.TabIndex = 5;
             this.labelLoading.Text = "Loading ...";
             // 
@@ -167,11 +165,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(304, 61);
+            this.AutoSize = true;
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(343, 231);
             this.Controls.Add(this.labelLoading);
             this.Controls.Add(this.dataGridCva);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
-            this.MinimumSize = new System.Drawing.Size(320, 100);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "FormCva";
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -180,7 +179,6 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormCva_FormClosing);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridCva)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 

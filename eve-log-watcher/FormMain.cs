@@ -33,7 +33,6 @@ namespace eve_log_watcher
             dataGridIntel.DataSource = _CitadelLogs;
 
             logWatcherIntel.LogName = Settings.Default.intelLogName;
-
             comboLogs.DataSource = LogWatcher.GetLogNames();
             comboLogs.SelectedItem = Settings.Default.intelLogName;
             comboLogs.SelectedIndexChanged += comboLogs_SelectedIndexChanged;
@@ -214,18 +213,6 @@ namespace eve_log_watcher
         private void buttonHotkeyChangeConfirm_Click(object sender, EventArgs e) {
             Settings.Default.kosCheckKey = (hotkeyControlKosCheck.Hotkey & ~cModifiers) | (hotkeyControlKosCheck.HotkeyModifiers & cModifiers);
             InitHook();
-        }
-
-        private void labelChannels_Click(object sender, EventArgs e) {
-
-        }
-
-        private void comboLogs_SelectedIndexChanged_1(object sender, EventArgs e) {
-
-        }
-
-        private void hotkeyControlKosCheck_TextChanged(object sender, EventArgs e) {
-
         }
     }
 }

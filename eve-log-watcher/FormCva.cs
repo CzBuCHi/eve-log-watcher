@@ -55,8 +55,11 @@ namespace eve_log_watcher
             _Form.dataGridCva.DataSource = _Form.DataTable.DefaultView;
             _Form.dataGridCva.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
 
-            Height = Math.Min(dataGridCva.Rows.Count*(dataGridCva.RowTemplate.Height + dataGridCva.RowTemplate.DividerHeight), 500) + 70;
-            Width = Math.Max(dataGridCva.Columns.Cast<DataGridViewColumn>().Where(c => c.Visible).Sum(c => c.Width + c.DividerWidth), 300) + 40;
+            Rectangle screenRectangle = RectangleToScreen(ClientRectangle);
+            int titleHeight = screenRectangle.Top - Top;
+
+            dataGridCva.Width = dataGridCva.Columns.Cast<DataGridViewColumn>().Sum(c => (c.Visible ? c.Width : 0) + c.DividerWidth)+1;
+            dataGridCva.Height = dataGridCva.ColumnHeadersHeight + dataGridCva.Rows.Count * (dataGridCva.RowTemplate.Height + dataGridCva.RowTemplate.DividerHeight);
         }
 
         private void dataGridCva_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e) {
@@ -109,6 +112,7 @@ namespace eve_log_watcher
             _Form.labelLoading.Visible = true;
             _Form.dataGridCva.Visible = false;
             _Form.DataTable.Rows.Clear();
+
             BackgroundWorker worker = new BackgroundWorker();
             worker.DoWork += FillDataTable;
             worker.RunWorkerCompleted += (sender, args) => {
@@ -129,7 +133,31 @@ namespace eve_log_watcher
         }
 
         private static void FillDataTable(object sender, DoWorkEventArgs args) {
+#if DEBUG
+            FillDataTableArg arg = (FillDataTableArg)args.Argument;
+            int sum = 0;
+            for (int i = 0; i < 10; i++) {
+                bool charKos = i % 3 == 2;
+                bool corporationKos = i % 5 == 4;
+                bool allianceKos = i % 7 == 6;
+                bool kos = charKos || corporationKos || allianceKos;
+                DataRow dataRow = arg.Table.NewRow();
+                dataRow[0] = "character #" + i;
+                dataRow[1] = charKos;
+                dataRow[2] = "Corporation #" + i;
+                dataRow[3] = corporationKos;
+                dataRow[4] = "Alliance #" + i;
+                dataRow[5] = allianceKos;
+                dataRow[6] = kos;
+                arg.Table.Rows.Add(dataRow);
+                if (kos) {
+                    ++sum;
+                }
+            }
+            args.Result = sum;
+#else
             args.Result = KosChecker.FillDataTable((FillDataTableArg) args.Argument);
+#endif
         }
 
         private static class KosChecker

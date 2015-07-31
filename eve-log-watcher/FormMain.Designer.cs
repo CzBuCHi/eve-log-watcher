@@ -146,7 +146,6 @@ namespace eve_log_watcher
             this.hotkeyControlKosCheck.Size = new System.Drawing.Size(182, 20);
             this.hotkeyControlKosCheck.TabIndex = 11;
             this.hotkeyControlKosCheck.Text = "Control + F";
-            this.hotkeyControlKosCheck.TextChanged += new System.EventHandler(this.hotkeyControlKosCheck_TextChanged);
             // 
             // comboBoxSystems
             // 
@@ -181,7 +180,6 @@ namespace eve_log_watcher
             this.labelChannels.Size = new System.Drawing.Size(54, 13);
             this.labelChannels.TabIndex = 8;
             this.labelChannels.Text = "Channels:";
-            this.labelChannels.Click += new System.EventHandler(this.labelChannels_Click);
             // 
             // comboLogs
             // 
@@ -193,7 +191,7 @@ namespace eve_log_watcher
             this.comboLogs.Name = "comboLogs";
             this.comboLogs.Size = new System.Drawing.Size(242, 21);
             this.comboLogs.TabIndex = 5;
-            this.comboLogs.SelectedIndexChanged += new System.EventHandler(this.comboLogs_SelectedIndexChanged_1);
+            this.comboLogs.SelectedIndexChanged += new System.EventHandler(this.comboLogs_SelectedIndexChanged);
             // 
             // panelRight
             // 
@@ -287,7 +285,7 @@ namespace eve_log_watcher
             this.Controls.Add(this.panelRight);
             this.Controls.Add(this.panelTop);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(1150, 0);
+            this.MinimumSize = new System.Drawing.Size(1150, 39);
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "eve-log-watcher";

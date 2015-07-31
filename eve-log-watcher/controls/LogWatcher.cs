@@ -27,18 +27,23 @@ namespace eve_log_watcher.controls
         public ISynchronizeInvoke SynchronizingObject { get; set; }
 
         public static string[] GetLogNames() {
-            IEnumerable<string> q = from filePath in Directory.EnumerateFiles(_LogsPath, "*.txt")
-                                    let fileName = Path.GetFileName(filePath)
-                                    let match = Regex.Match(fileName, @"(.*?)_\d+_\d+\.txt$", RegexOptions.Compiled | RegexOptions.IgnoreCase)
-                                    where match.Success
-                                    select match.Groups[1].Value;
+            try {
+                IEnumerable<string> q = from filePath in Directory.EnumerateFiles(_LogsPath, "*.txt")
+                                        let fileName = Path.GetFileName(filePath)
+                                        let match = Regex.Match(fileName, @"(.*?)_\d+_\d+\.txt$", RegexOptions.Compiled | RegexOptions.IgnoreCase)
+                                        where match.Success
+                                        select match.Groups[1].Value;
 
 
-            if (!string.IsNullOrEmpty(Settings.Default.intelLogName)) {
-                q = q.Union(new[] { Settings.Default.intelLogName });
+                if (!string.IsNullOrEmpty(Settings.Default.intelLogName)) {
+                    q = q.Union(new[] { Settings.Default.intelLogName });
+                }
+
+                return q.Distinct().ToArray();
+            } catch{
+                MessageBox.Show("Unable to find EVE log files. Please run EVE first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return new string[0];
             }
-
-            return q.Distinct().ToArray();
         }
 
         private void OnTick(object sender, EventArgs eventArgs) {
