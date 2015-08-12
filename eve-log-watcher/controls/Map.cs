@@ -49,7 +49,11 @@ namespace eve_log_watcher.controls
             try {
                 lock (_Nodes) {
                     foreach (Node node in _Nodes.Values) {
-                        node.Attr.FillColor = Color.Transparent;
+                        if (node.LabelText == CurrentSystemName) {
+                            node.Attr.FillColor = Color.GreenYellow;
+                        } else {
+                            node.Attr.FillColor = Color.Transparent;
+                        }
                     }
                     foreach (KeyValuePair<string, DateTime> pair in RedInfo) {
                         Node node;
