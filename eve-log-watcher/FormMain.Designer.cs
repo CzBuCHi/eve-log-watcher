@@ -34,10 +34,12 @@ namespace eve_log_watcher
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.buttonClear = new System.Windows.Forms.Button();
             this.buttonHotkeyChangeConfirm = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.labelTime = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.hotkeyControlKosCheck = new exscape.HotkeyControl();
             this.comboBoxSystems = new System.Windows.Forms.ComboBox();
             this.buttonRefresh = new System.Windows.Forms.Button();
             this.labelChannels = new System.Windows.Forms.Label();
@@ -48,7 +50,6 @@ namespace eve_log_watcher
             this.colSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.timerTime = new System.Windows.Forms.Timer(this.components);
             this.map = new eve_log_watcher.controls.Map();
-            this.hotkeyControlKosCheck = new exscape.HotkeyControl();
             this.logWatcherLocal = new eve_log_watcher.controls.LogWatcher();
             this.logWatcherIntel = new eve_log_watcher.controls.LogWatcher();
             this.panelTop.SuspendLayout();
@@ -82,6 +83,7 @@ namespace eve_log_watcher
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.buttonClear);
             this.panelTop.Controls.Add(this.buttonStop);
             this.panelTop.Controls.Add(this.buttonStart);
             this.panelTop.Controls.Add(this.buttonHotkeyChangeConfirm);
@@ -98,6 +100,17 @@ namespace eve_log_watcher
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(1134, 39);
             this.panelTop.TabIndex = 4;
+            // 
+            // buttonClear
+            // 
+            this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonClear.Location = new System.Drawing.Point(984, 9);
+            this.buttonClear.Name = "buttonClear";
+            this.buttonClear.Size = new System.Drawing.Size(55, 21);
+            this.buttonClear.TabIndex = 15;
+            this.buttonClear.Text = "Clear";
+            this.buttonClear.UseVisualStyleBackColor = true;
+            this.buttonClear.Click += new System.EventHandler(this.buttonClear_Click);
             // 
             // buttonHotkeyChangeConfirm
             // 
@@ -137,6 +150,16 @@ namespace eve_log_watcher
             this.label1.TabIndex = 12;
             this.label1.Text = "KOS check shortcut:";
             // 
+            // hotkeyControlKosCheck
+            // 
+            this.hotkeyControlKosCheck.Hotkey = System.Windows.Forms.Keys.F;
+            this.hotkeyControlKosCheck.HotkeyModifiers = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
+            this.hotkeyControlKosCheck.Location = new System.Drawing.Point(494, 10);
+            this.hotkeyControlKosCheck.Name = "hotkeyControlKosCheck";
+            this.hotkeyControlKosCheck.Size = new System.Drawing.Size(182, 20);
+            this.hotkeyControlKosCheck.TabIndex = 11;
+            this.hotkeyControlKosCheck.Text = "Control + F";
+            // 
             // comboBoxSystems
             // 
             this.comboBoxSystems.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
@@ -165,7 +188,7 @@ namespace eve_log_watcher
             // 
             this.labelChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelChannels.AutoSize = true;
-            this.labelChannels.Location = new System.Drawing.Point(732, 12);
+            this.labelChannels.Location = new System.Drawing.Point(739, 13);
             this.labelChannels.Name = "labelChannels";
             this.labelChannels.Size = new System.Drawing.Size(54, 13);
             this.labelChannels.TabIndex = 8;
@@ -177,9 +200,9 @@ namespace eve_log_watcher
             this.comboLogs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboLogs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboLogs.FormattingEnabled = true;
-            this.comboLogs.Location = new System.Drawing.Point(792, 9);
+            this.comboLogs.Location = new System.Drawing.Point(799, 9);
             this.comboLogs.Name = "comboLogs";
-            this.comboLogs.Size = new System.Drawing.Size(242, 21);
+            this.comboLogs.Size = new System.Drawing.Size(179, 21);
             this.comboLogs.TabIndex = 5;
             // 
             // panelRight
@@ -253,16 +276,6 @@ namespace eve_log_watcher
             this.map.TabIndex = 0;
             this.map.SizeChanged += new System.EventHandler(this.map_SizeChanged);
             // 
-            // hotkeyControlKosCheck
-            // 
-            this.hotkeyControlKosCheck.Hotkey = System.Windows.Forms.Keys.F;
-            this.hotkeyControlKosCheck.HotkeyModifiers = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
-            this.hotkeyControlKosCheck.Location = new System.Drawing.Point(494, 10);
-            this.hotkeyControlKosCheck.Name = "hotkeyControlKosCheck";
-            this.hotkeyControlKosCheck.Size = new System.Drawing.Size(182, 20);
-            this.hotkeyControlKosCheck.TabIndex = 11;
-            this.hotkeyControlKosCheck.Text = "Control + F";
-            // 
             // logWatcherLocal
             // 
             this.logWatcherLocal.Interval = 250;
@@ -320,6 +333,7 @@ namespace eve_log_watcher
         private HotkeyControl hotkeyControlKosCheck;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button buttonHotkeyChangeConfirm;
+        private System.Windows.Forms.Button buttonClear;
     }
 }
 

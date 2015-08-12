@@ -134,6 +134,7 @@ namespace eve_log_watcher
             buttonRefresh.Enabled = false;
             buttonStart.Visible = false;
             buttonStop.Visible = true;
+            buttonClear.Enabled = false;
         }
 
         private void buttonStop_Click(object sender, EventArgs e) {
@@ -146,6 +147,7 @@ namespace eve_log_watcher
             buttonRefresh.Enabled = true;
             buttonStart.Visible = true;
             buttonStop.Visible = false;
+            buttonClear.Enabled = true;
         }
 
         private static void WorkerOnDoWork(object sender, DoWorkEventArgs args) {
@@ -213,6 +215,10 @@ namespace eve_log_watcher
         private void buttonHotkeyChangeConfirm_Click(object sender, EventArgs e) {
             Settings.Default.kosCheckKey = (hotkeyControlKosCheck.Hotkey & ~cModifiers) | (hotkeyControlKosCheck.HotkeyModifiers & cModifiers);
             InitHook();
+        }
+
+        private void buttonClear_Click(object sender, EventArgs e) {            
+            LogWatcher.Clear();            
         }
     }
 }

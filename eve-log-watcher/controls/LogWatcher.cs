@@ -26,6 +26,16 @@ namespace eve_log_watcher.controls
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public ISynchronizeInvoke SynchronizingObject { get; set; }
 
+        public static void Clear() {
+            try {
+                foreach (var file in Directory.EnumerateFiles(_LogsPath, "*.txt")) {
+                    File.Delete(file);
+                }
+            } catch {
+                MessageBox.Show("Unable to delete EVE log files. EVE is running?", "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
         public static string[] GetLogNames() {
             try {
                 IEnumerable<string> q = from filePath in Directory.EnumerateFiles(_LogsPath, "*.txt")
