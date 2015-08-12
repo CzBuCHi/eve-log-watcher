@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using Microsoft.Msagl.Core.Layout;
+using eve_log_watcher.model;
 using Microsoft.Msagl.Core.Routing;
 using Microsoft.Msagl.Drawing;
-using Edge = Microsoft.Msagl.Drawing.Edge;
-using Node = Microsoft.Msagl.Drawing.Node;
+using Microsoft.Msagl.Layout.MDS;
 
 namespace eve_log_watcher.controls
 {
@@ -23,6 +22,7 @@ namespace eve_log_watcher.controls
 
         // ReSharper disable once MemberCanBePrivate.Global
         public int RedShowDuration { get; set; } = 10;
+        public int MaxVisibleSystems { get; set; } = 20;
 
         public string CurrentSystemName {
             // ReSharper disable once UnusedMember.Global
@@ -70,11 +70,16 @@ namespace eve_log_watcher.controls
             GetSystems(out infos, out q);
 
             gViewer.Graph = null;
-            Graph graph = new Graph("graph");
-            graph.LayoutAlgorithmSettings.EdgeRoutingSettings.EdgeRoutingMode = EdgeRoutingMode.SugiyamaSplines;
-            graph.LayoutAlgorithmSettings.EdgeRoutingSettings.RouteMultiEdgesAsBundles = true;
-            graph.LayoutAlgorithmSettings.PackingMethod = PackingMethod.Compact;
-            
+            Graph graph = new Graph("graph") {
+                LayoutAlgorithmSettings = new MdsLayoutSettings {
+                    EdgeRoutingSettings = new EdgeRoutingSettings {
+                        EdgeRoutingMode = EdgeRoutingMode.Spline,
+                        RouteMultiEdgesAsBundles = false
+                    },
+                    AdjustScale = true
+                }
+            };
+
             Dictionary<string, HashSet<string>> dict = new Dictionary<string, HashSet<string>>();
 
             lock (_Nodes) {
@@ -82,22 +87,17 @@ namespace eve_log_watcher.controls
                 foreach (SystemInfo info in q.SelectMany(o => o)) {
                     if (!_Nodes.ContainsKey(info.Name)) {
                         Node node = graph.AddNode(info.Name);
-                        if (!info.ShowName) {
-                            node.LabelText = "";
-                        }
                         _Nodes.Add(info.Name, node);
                     }
 
-                    if (info.PrevId == null) {
+                    if (info.Parent == null) {
                         continue;
                     }
 
-                    SystemInfo prev = infos[info.PrevId.Value];
-
                     HashSet<string> list;
-                    if (!dict.TryGetValue(prev.Name, out list)) {
+                    if (!dict.TryGetValue(info.Parent.Name, out list)) {
                         list = new HashSet<string>();
-                        dict[prev.Name] = list;
+                        dict[info.Parent.Name] = list;
                     }
                     if (!list.Contains(info.Name)) {
                         list.Add(info.Name);
@@ -119,66 +119,66 @@ namespace eve_log_watcher.controls
             }
 
             gViewer.Graph = graph;
-            Height = (int)(Width * gViewer.GraphHeight / gViewer.GraphWidth);
+            Height = (int) (Width*gViewer.GraphHeight/gViewer.GraphWidth);
             UpdateNodes();
         }
 
+        private IEnumerable<SystemInfo> GetConnected(IEnumerable<SystemInfo> prev, int[] prevIds) {
+            foreach (SystemInfo o in prev) {
+                IQueryable<SolarSystem> q = from o3 in DbHelper.DataContext.SolarSystemJumps
+                        join o4 in DbHelper.DataContext.SolarSystems on o3.ToSolarsystemId equals o4.Id
+                        where o3.FromSolarsystemId == o.Id
+                        select o4;
+
+                foreach (SolarSystem o2 in q) {
+                    o.Childrens++;
+                    if (prevIds.Contains(o2.Id)) {
+                        continue;
+                    }
+                    yield return new SystemInfo {
+                        Id = o2.Id,
+                        Parent = o,
+                        Name = o2.SolarSystemName
+                    };
+                }
+            }
+        }
+
         private void GetSystems(out Dictionary<int, SystemInfo> infos, out SystemInfo[][] systemsByJumps) {
-            const int cMaxSystems = 8;
-
-            Func<IEnumerable<SystemInfo>, IEnumerable<SystemInfo>> getConnected = s => from o in s
-                                                                                       where o.ShowName
-                                                                                       from o2 in from o3 in DbHelper.DataContext.SolarSystemJumps
-                                                                                                  join o4 in DbHelper.DataContext.SolarSystems on o3.ToSolarsystemId equals o4.Id
-                                                                                                  where o3.FromSolarsystemId == o.Id
-                                                                                                  select o4
-                                                                                       select new SystemInfo { Id = o2.Id, PrevId = o.Id, Name = o2.SolarSystemName };
-
             IEnumerable<SystemInfo> current = from o in DbHelper.DataContext.SolarSystems
                                               where o.SolarSystemName == _CurrentSystemName
-                                              select new SystemInfo { Id = o.Id, Name = o.SolarSystemName };
+                                              select new SystemInfo {
+                                                  Id = o.Id,
+                                                  Name = o.SolarSystemName
+                                              };
 
             current = current.ToArray();
 
+            List<SystemInfo[]> jumps = new List<SystemInfo[]> {(SystemInfo[]) current};
             SystemInfo[] total = current.ToArray();
 
-            SystemInfo[] oneJump = getConnected(current).ToArray();
-            total = total.Union(oneJump).ToArray();
-
-            SystemInfo[] twoJumps = getConnected(oneJump).ToArray();
-            total = total.Union(twoJumps).ToArray();
-
-            SystemInfo[] threeJumps = getConnected(twoJumps).ToArray();
-            if (twoJumps.Length - total.Length > cMaxSystems) {
-                foreach (SystemInfo info in threeJumps) {
-                    info.ShowName = false;
+            while (total.Length < MaxVisibleSystems) {
+                SystemInfo[] next = GetConnected(current, total.Select(o => o.Id).ToArray()).ToArray();
+                if (total.Length + next.Length > 20) {
+                    int count = MaxVisibleSystems - total.Length;
+                    if (count < next.Length) {
+                        SystemInfo[] array = new SystemInfo[count];
+                        Array.Copy(next, array, count);
+                        next = array;
+                    }
                 }
+                total = total.Union(next).ToArray();
+                jumps.Add(next);
+                current = next;
             }
-            total = total.Union(threeJumps).ToArray();
-
-            SystemInfo[] fourJumps = getConnected(threeJumps).ToArray();
-            if (twoJumps.Length - total.Length > cMaxSystems || threeJumps.Length - total.Length > cMaxSystems) {
-                foreach (SystemInfo info in fourJumps) {
-                    info.ShowName = false;
-                }
-            }
-            total = total.Union(fourJumps).ToArray();
-
-            SystemInfo[] fiveJumps = getConnected(fourJumps).ToArray();
-            if (twoJumps.Length - total.Length > cMaxSystems || threeJumps.Length - total.Length > cMaxSystems || fourJumps.Length - total.Length > cMaxSystems) {
-                foreach (SystemInfo info in fiveJumps) {
-                    info.ShowName = false;
-                }
-            }
-            total = total.Union(fiveJumps).Distinct().ToArray();
 
             infos = total.ToDictionary(o => o.Id);
-            systemsByJumps = new[] { (SystemInfo[])current, oneJump, twoJumps, threeJumps, fourJumps, fiveJumps };
+            systemsByJumps = jumps.ToArray();
         }
 
         private void Map_SizeChanged(object sender, EventArgs e) {
             if (gViewer.Graph != null) {
-                Height = (int)(Width * gViewer.GraphHeight / gViewer.GraphWidth);
+                Height = (int) (Width*gViewer.GraphHeight/gViewer.GraphWidth);
             }
         }
 
@@ -188,8 +188,8 @@ namespace eve_log_watcher.controls
                 DateTime now = DateTime.Now;
                 TimeSpan delta = TimeSpan.FromSeconds(RedShowDuration);
                 IEnumerable<string> q = from pair in _RedInfo
-                                        where now - pair.Value > delta
-                                        select pair.Key;
+                        where now - pair.Value > delta
+                        select pair.Key;
 
                 trash = q.ToArray();
 
@@ -202,14 +202,16 @@ namespace eve_log_watcher.controls
             }
         }
 
+        private void gViewer_Load(object sender, EventArgs e) {
+        }
+
         [DebuggerDisplay("{Name}")]
         private class SystemInfo
         {
             public int Id { get; set; }
             public string Name { get; set; }
-            public int? PrevId { get; set; }
-
-            public bool ShowName { get; set; } = true;
+            public SystemInfo Parent { get; set; }
+            public int Childrens { get; set; }
 
             public override bool Equals(object obj) {
                 if (ReferenceEquals(null, obj)) {

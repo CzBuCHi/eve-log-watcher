@@ -43,7 +43,7 @@
             this.gViewer.AutoScroll = true;
             this.gViewer.BackwardEnabled = false;
             this.gViewer.BuildHitTree = false;
-            this.gViewer.CurrentLayoutMethod = Microsoft.Msagl.GraphViewerGdi.LayoutMethod.UseSettingsOfTheGraph;
+            this.gViewer.CurrentLayoutMethod = Microsoft.Msagl.GraphViewerGdi.LayoutMethod.MDS;
             this.gViewer.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gViewer.FileName = "";
             this.gViewer.ForwardEnabled = false;
@@ -74,6 +74,7 @@
             this.gViewer.ZoomFraction = 0.5D;
             this.gViewer.ZoomWhenMouseWheelScroll = false;
             this.gViewer.ZoomWindowThreshold = 0.05D;
+            this.gViewer.Load += new System.EventHandler(this.gViewer_Load);
             // 
             // Map
             // 

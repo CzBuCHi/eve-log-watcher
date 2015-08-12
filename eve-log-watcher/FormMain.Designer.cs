@@ -38,7 +38,6 @@ namespace eve_log_watcher
             this.label2 = new System.Windows.Forms.Label();
             this.labelTime = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.hotkeyControlKosCheck = new exscape.HotkeyControl();
             this.comboBoxSystems = new System.Windows.Forms.ComboBox();
             this.buttonRefresh = new System.Windows.Forms.Button();
             this.labelChannels = new System.Windows.Forms.Label();
@@ -49,6 +48,7 @@ namespace eve_log_watcher
             this.colSystem = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.timerTime = new System.Windows.Forms.Timer(this.components);
             this.map = new eve_log_watcher.controls.Map();
+            this.hotkeyControlKosCheck = new exscape.HotkeyControl();
             this.logWatcherLocal = new eve_log_watcher.controls.LogWatcher();
             this.logWatcherIntel = new eve_log_watcher.controls.LogWatcher();
             this.panelTop.SuspendLayout();
@@ -137,16 +137,6 @@ namespace eve_log_watcher
             this.label1.TabIndex = 12;
             this.label1.Text = "KOS check shortcut:";
             // 
-            // hotkeyControlKosCheck
-            // 
-            this.hotkeyControlKosCheck.Hotkey = System.Windows.Forms.Keys.F;
-            this.hotkeyControlKosCheck.HotkeyModifiers = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
-            this.hotkeyControlKosCheck.Location = new System.Drawing.Point(494, 10);
-            this.hotkeyControlKosCheck.Name = "hotkeyControlKosCheck";
-            this.hotkeyControlKosCheck.Size = new System.Drawing.Size(182, 20);
-            this.hotkeyControlKosCheck.TabIndex = 11;
-            this.hotkeyControlKosCheck.Text = "Control + F";
-            // 
             // comboBoxSystems
             // 
             this.comboBoxSystems.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
@@ -191,7 +181,6 @@ namespace eve_log_watcher
             this.comboLogs.Name = "comboLogs";
             this.comboLogs.Size = new System.Drawing.Size(242, 21);
             this.comboLogs.TabIndex = 5;
-            this.comboLogs.SelectedIndexChanged += new System.EventHandler(this.comboLogs_SelectedIndexChanged);
             // 
             // panelRight
             // 
@@ -256,11 +245,23 @@ namespace eve_log_watcher
             this.map.CurrentSystemName = null;
             this.map.Dock = System.Windows.Forms.DockStyle.Top;
             this.map.Location = new System.Drawing.Point(0, 39);
+            this.map.MaximumSize = new System.Drawing.Size(0, 800);
+            this.map.MaxVisibleSystems = 30;
             this.map.Name = "map";
             this.map.RedShowDuration = 10;
-            this.map.Size = new System.Drawing.Size(733, 411);
+            this.map.Size = new System.Drawing.Size(733, 137);
             this.map.TabIndex = 0;
             this.map.SizeChanged += new System.EventHandler(this.map_SizeChanged);
+            // 
+            // hotkeyControlKosCheck
+            // 
+            this.hotkeyControlKosCheck.Hotkey = System.Windows.Forms.Keys.F;
+            this.hotkeyControlKosCheck.HotkeyModifiers = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
+            this.hotkeyControlKosCheck.Location = new System.Drawing.Point(494, 10);
+            this.hotkeyControlKosCheck.Name = "hotkeyControlKosCheck";
+            this.hotkeyControlKosCheck.Size = new System.Drawing.Size(182, 20);
+            this.hotkeyControlKosCheck.TabIndex = 11;
+            this.hotkeyControlKosCheck.Text = "Control + F";
             // 
             // logWatcherLocal
             // 
