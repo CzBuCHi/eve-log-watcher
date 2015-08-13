@@ -98,7 +98,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>D/Ps91pAKcwC6UEMiKI0j/MZSkHyxaqL8aQvztgQIAc=</dsig:DigestValue>
+        <dsig:DigestValue>SGbM1QlRYkp4XSF20Cy6GsUG5BQThaMOh6ZM/z80Mmg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -198,6 +198,15 @@
       </hash>
     </dependentAssembly>
   </dependency>
+  <file name="eve-log-watcher.db3" size="1252352">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>daQDhDRvlYV+ag8o2d050bD5ax6OpQxxf/BgFj6n2+4=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="eve-log-watcher.exe.config" size="2373">
     <hash>
       <dsig:Transforms>
@@ -214,6 +223,24 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
       <dsig:DigestValue>X6JWkkgsmoRDyQti83FgBrOgy/9gM1ug2f43fAii4yE=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="x64\SQLite.Interop.dll" size="1174016">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>K8GMJL7se6rUhYmWO0sJHNChCe7BRcsMkeJzQLpedi0=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="x86\SQLite.Interop.dll" size="988672">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>U/K7swC/nDJamPVxean4s4pN3i+XVje4JajuSdyRUjA=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>
