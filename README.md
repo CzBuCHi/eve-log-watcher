@@ -11,3 +11,5 @@ http://kos.cva-eve.org/ integrated check:
 	
 Screenhot: (in less than 10 seconds ago there was intel about 'Mamet' solar system)
 ![Screenhot](https://raw.githubusercontent.com/CzBuCHi/eve-log-watcher/master/screenhot.png)
+
+![Installer](https://github.com/CzBuCHi/eve-log-watcher/blob/master/publish/setup.exe)
