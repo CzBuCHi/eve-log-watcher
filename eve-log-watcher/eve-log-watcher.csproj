@@ -18,16 +18,19 @@
     <PublishUrl>..\publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Background</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdatePeriodically>true</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>https://raw.githubusercontent.com/CzBuCHi/eve-log-watcher/master/publish/</InstallUrl>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
+    <TargetCulture>en</TargetCulture>
+    <ProductName>eve-log-watcher</ProductName>
+    <PublisherName>CzBuCHi</PublisherName>
     <WebPage>publish.htm</WebPage>
+    <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.0</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
@@ -60,7 +63,7 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>EF7BF2173D0C4C401B4BCC6EDD87D73F084EDA7E</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>C12AB0924506DF78D4BCBFFD01E494081530EF4C</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>eve-log-watcher_TemporaryKey.pfx</ManifestKeyFile>
@@ -188,7 +191,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="eve-log-watcher_TemporaryKey.pfx" />
     <None Include="key.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
