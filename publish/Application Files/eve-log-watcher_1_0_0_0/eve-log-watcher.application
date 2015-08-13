@@ -7,7 +7,7 @@
     <framework targetVersion="4.5.2" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="Application Files\eve-log-watcher_1_0_0_0\eve-log-watcher.exe.manifest" size="12326">
+    <dependentAssembly dependencyType="install" codebase="eve-log-watcher.exe.manifest" size="12326">
       <assemblyIdentity name="eve-log-watcher.exe" version="1.0.0.0" publicKeyToken="0000000000000000" language="en" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
