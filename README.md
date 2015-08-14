@@ -1,6 +1,6 @@
 # eve-log-watcher
 
-##### ![Installer](https://github.com/CzBuCHi/eve-log-watcher/blob/master/publish/setup.exe?raw=true)
+##### [Installer](https://github.com/CzBuCHi/eve-log-watcher/blob/master/publish/setup.exe?raw=true)
 
 App is watching log file for changes, parsing solar system names from new entries and showing them in dotlan-style map if they are close enouch to player current location.
 
@@ -13,4 +13,3 @@ http://kos.cva-eve.org/ integrated check:
 	
 Screenhot: (in less than 10 seconds ago there was intel about 'Mamet' solar system)
 ![Screenhot](https://raw.githubusercontent.com/CzBuCHi/eve-log-watcher/master/screenhot.png)
-
