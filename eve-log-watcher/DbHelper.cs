@@ -33,9 +33,9 @@ namespace eve_log_watcher
 
             string dbName = q.First();
 #if DEBUG
-            if (File.Exists(dbName)) {
-                File.Delete(dbName);
-            }
+            //if (File.Exists(dbName)) {
+            //    File.Delete(dbName);
+            //}
 #endif
             if (File.Exists(dbName)) {
                 return;

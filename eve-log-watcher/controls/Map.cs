@@ -13,7 +13,8 @@ namespace eve_log_watcher.controls
     public partial class Map : UserControl
     {
         private readonly Dictionary<string, Node> _Nodes = new Dictionary<string, Node>();
-        private readonly Dictionary<string, DateTime> _RedInfo = new Dictionary<string, DateTime>();
+        private readonly Dictionary<string, DateTime> _Intel = new Dictionary<string, DateTime>();
+        private readonly Dictionary<string, DateTime> _Kos = new Dictionary<string, DateTime>();
         private string _CurrentSystemName;
 
         public Map() {
@@ -21,7 +22,8 @@ namespace eve_log_watcher.controls
         }
 
         // ReSharper disable once MemberCanBePrivate.Global
-        public int RedShowDuration { get; set; } = 10;
+        public int IntelShowDuration { get; set; } = 10;
+        public int KosShowDuration { get; set; } = 20;
         public int MaxVisibleSystems { get; set; } = 20;
 
         public string CurrentSystemName {
@@ -36,10 +38,18 @@ namespace eve_log_watcher.controls
             }
         }
 
-        public Dictionary<string, DateTime> RedInfo {
+        public Dictionary<string, DateTime> Intel {
             get {
-                lock (_RedInfo) {
-                    return _RedInfo;
+                lock (_Intel) {
+                    return _Intel;
+                }
+            }
+        }
+
+        public Dictionary<string, DateTime> Kos {
+            get {
+                lock (_Kos) {
+                    return _Kos;
                 }
             }
         }
@@ -55,10 +65,16 @@ namespace eve_log_watcher.controls
                             node.Attr.FillColor = Color.Transparent;
                         }
                     }
-                    foreach (KeyValuePair<string, DateTime> pair in RedInfo) {
+                    foreach (KeyValuePair<string, DateTime> pair in Intel) {
                         Node node;
                         if (_Nodes.TryGetValue(pair.Key, out node)) {
                             node.Attr.FillColor = Color.LightPink;
+                        }
+                    }
+                    foreach (KeyValuePair<string, DateTime> pair in Kos) {
+                        Node node;
+                        if (_Nodes.TryGetValue(pair.Key, out node)) {
+                            node.Attr.FillColor = Color.IndianRed;
                         }
                     }
                 }
@@ -188,17 +204,19 @@ namespace eve_log_watcher.controls
 
         private void timerCleaner_Tick(object sender, EventArgs e) {
             string[] trash;
-            lock (_RedInfo) {
+            lock (_Intel) {
                 DateTime now = DateTime.Now;
-                TimeSpan delta = TimeSpan.FromSeconds(RedShowDuration);
-                IEnumerable<string> q = from pair in _RedInfo
-                        where now - pair.Value > delta
-                        select pair.Key;
 
-                trash = q.ToArray();
+                TimeSpan delta = TimeSpan.FromSeconds(IntelShowDuration);
+                IEnumerable<string> q = _Intel.Where(pair => now - pair.Value > delta).Select(pair => pair.Key).Except(_Kos.Keys).ToArray();
+
+                delta = TimeSpan.FromSeconds(KosShowDuration);
+                IEnumerable<string> q2 = _Kos.Where(pair => now - pair.Value > delta).Select(pair => pair.Key).ToArray();
+
+                trash = q.Union(q2).Distinct().ToArray();
 
                 foreach (string key in trash) {
-                    _RedInfo.Remove(key);
+                    _Intel.Remove(key);
                 }
             }
             if (trash.Length > 0) {

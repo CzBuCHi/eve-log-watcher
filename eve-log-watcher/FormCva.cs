@@ -8,8 +8,11 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using eve_log_watcher.cva_kos_api;
+using eve_log_watcher.server;
 using EveAI.Live;
 using EveAI.Live.Character;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace eve_log_watcher
 {
@@ -33,7 +36,9 @@ namespace eve_log_watcher
         // ReSharper disable once MemberCanBePrivate.Global
         public bool CanBeClosed { get; set; }
 
-        public static FormCva ShowMe() {
+        private long _CurrentSystemId;
+        public static FormCva ShowMe(long currentSystemId) {
+            _Form._CurrentSystemId = currentSystemId;
             _Form.Text = @"Loading ...";
             try {
                 FillDataTable();
@@ -55,11 +60,18 @@ namespace eve_log_watcher
             _Form.dataGridCva.DataSource = _Form.DataTable.DefaultView;
             _Form.dataGridCva.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
 
-            Rectangle screenRectangle = RectangleToScreen(ClientRectangle);
-            int titleHeight = screenRectangle.Top - Top;
+            dataGridCva.Width = dataGridCva.Columns.Cast<DataGridViewColumn>().Sum(c => (c.Visible ? c.Width : 0) + c.DividerWidth) + 1;
+            dataGridCva.Height = dataGridCva.ColumnHeadersHeight + dataGridCva.Rows.Count*(dataGridCva.RowTemplate.Height + dataGridCva.RowTemplate.DividerHeight);
 
-            dataGridCva.Width = dataGridCva.Columns.Cast<DataGridViewColumn>().Sum(c => (c.Visible ? c.Width : 0) + c.DividerWidth)+1;
-            dataGridCva.Height = dataGridCva.ColumnHeadersHeight + dataGridCva.Rows.Count * (dataGridCva.RowTemplate.Height + dataGridCva.RowTemplate.DividerHeight);
+
+            string[] kos = _Form.DataTable.Rows.Cast<DataRow>().Where(row => (bool) row["Kos"]).Select(row => (string) row["PilotName"]).ToArray();
+            if (kos.Length > 0) {
+                var data = new {
+                    SystemId = _Form._CurrentSystemId,
+                    Kos = kos
+                };
+                EveIntelServerConnector.SendMessage(JObject.FromObject(data).ToString(Formatting.None));
+            }
         }
 
         private void dataGridCva_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e) {

@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eve-log-watcher", "eve-log-watcher\eve-log-watcher.csproj", "{A0A6C138-F148-4214-9814-D095267D1776}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eve-intel-server", "eve-intel-server\eve-intel-server.csproj", "{5A8A321B-B763-4294-AB76-5039EF4C968B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{A0A6C138-F148-4214-9814-D095267D1776}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A0A6C138-F148-4214-9814-D095267D1776}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A0A6C138-F148-4214-9814-D095267D1776}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A8A321B-B763-4294-AB76-5039EF4C968B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A8A321B-B763-4294-AB76-5039EF4C968B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A8A321B-B763-4294-AB76-5039EF4C968B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A8A321B-B763-4294-AB76-5039EF4C968B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

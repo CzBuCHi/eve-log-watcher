@@ -271,7 +271,7 @@ namespace eve_log_watcher
             this.map.MaximumSize = new System.Drawing.Size(0, 800);
             this.map.MaxVisibleSystems = 30;
             this.map.Name = "map";
-            this.map.RedShowDuration = 10;
+            this.map.IntelShowDuration = 10;
             this.map.Size = new System.Drawing.Size(733, 137);
             this.map.TabIndex = 0;
             this.map.SizeChanged += new System.EventHandler(this.map_SizeChanged);
@@ -303,6 +303,7 @@ namespace eve_log_watcher
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "eve-log-watcher";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.panelTop.ResumeLayout(false);
             this.panelTop.PerformLayout();
             this.panelRight.ResumeLayout(false);

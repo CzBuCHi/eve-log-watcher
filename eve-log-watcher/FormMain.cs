@@ -8,6 +8,8 @@ using System.Windows.Forms;
 using eve_log_watcher.controls;
 using eve_log_watcher.model;
 using eve_log_watcher.Properties;
+using eve_log_watcher.server;
+using Newtonsoft.Json.Linq;
 
 namespace eve_log_watcher
 {
@@ -18,6 +20,7 @@ namespace eve_log_watcher
         private FormCva _FormCva;
         private bool _ComboBoxSystemsSetValue;
         private const Keys cModifiers = Keys.Control | Keys.Shift | Keys.Alt;
+
         public FormMain() {
             InitializeComponent();
 
@@ -52,10 +55,38 @@ namespace eve_log_watcher
             hotkeyControlKosCheck.Hotkey = Settings.Default.kosCheckKey & ~cModifiers;
             hotkeyControlKosCheck.HotkeyModifiers = Settings.Default.kosCheckKey & cModifiers;
             InitHook();
+
+            EveIntelServerConnector.Connect();
+            EveIntelServerConnector.Message += data => {
+                BeginInvoke(new EveIntelServerConnectorOnMessageDelegate(EveIntelServerConnectorOnMessage), data);
+            };
+        }
+
+        private delegate void EveIntelServerConnectorOnMessageDelegate(string data);
+
+        private void EveIntelServerConnectorOnMessage(string data) {
+            var newRow = _CitadelLogs.NewRow();
+            var jObject = JObject.Parse(data);
+            var kos = ((JArray) jObject["Kos"]).Select(o => o.Value<string>()).ToArray();
+            newRow[0] = "KOS:" + string.Join(", ", kos);
+            long systemId = (long) jObject["SystemId"];
+            SolarSystem solarSystem = DbHelper.DataContext.SolarSystems.First(o => o.Id == systemId);
+            newRow[1] = solarSystem.SolarSystemName;
+            _CitadelLogs.Rows.Add(newRow);
+
+            dataGridIntel.Refresh();
+            dataGridIntel.ClearSelection();
+            DataGridViewRow row = dataGridIntel.Rows.OfType<DataGridViewRow>().LastOrDefault();
+            if (row != null) {
+                row.Selected = true;
+                dataGridIntel.FirstDisplayedScrollingRowIndex = row.Index;
+            }
+
+            UpdateMapKos(new[] {solarSystem.SolarSystemName}, true);
         }
 
         private void HookOnKeyPressed(object sender, KeyPressedEventArgs keyPressedEventArgs) {
-            _FormCva = FormCva.ShowMe();
+            _FormCva = FormCva.ShowMe(Settings.Default.currentSystemId);
             _FormCva.Owner = this;
         }
 
@@ -106,16 +137,26 @@ namespace eve_log_watcher
                     dataGridIntel.FirstDisplayedScrollingRowIndex = row.Index;
                 }
                 List<string> result = (List<string>) args.Result;
-                DateTime now = DateTime.Now;
-                foreach (string item in result) {
-                    map.RedInfo[item] = now;
-                }
-                map.UpdateNodes();
+                UpdateMapKos(result, false);
             };
             worker.RunWorkerAsync(new LogWatcherIntelProcessNewDataArg {
                 Lines = e.Lines,
                 Logs = _CitadelLogs
             });
+        }
+        
+        private void UpdateMapKos(IEnumerable<string> systemNames, bool confirmedKos) {
+            DateTime now = DateTime.Now;
+            if (confirmedKos) {
+                foreach (string item in systemNames) {
+                    map.Kos[item] = now;
+                }
+            } else {
+                foreach (string item in systemNames) {
+                    map.Intel[item] = now;
+                }
+            }
+            map.UpdateNodes();
         }
 
         private void buttonStart_Click(object sender, EventArgs e) {
@@ -219,6 +260,10 @@ namespace eve_log_watcher
 
         private void buttonClear_Click(object sender, EventArgs e) {            
             LogWatcher.Clear();            
+        }
+
+        private void FormMain_FormClosing(object sender, FormClosingEventArgs e) {
+            EveIntelServerConnector.Disconect();
         }
     }
 }
