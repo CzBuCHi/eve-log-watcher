@@ -6,11 +6,12 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using eve_log_watcher.controls;
+using eve_log_watcher.eve_intel_server;
+using eve_log_watcher.eve_intel_server.messages;
 using eve_log_watcher.model;
 using eve_log_watcher.Properties;
-using eve_log_watcher.server;
-using Newtonsoft.Json.Linq;
 
+// TODO: too many code in here ... move something into helper class
 namespace eve_log_watcher
 {
     public partial class FormMain : Form
@@ -55,22 +56,45 @@ namespace eve_log_watcher
             hotkeyControlKosCheck.Hotkey = Settings.Default.kosCheckKey & ~cModifiers;
             hotkeyControlKosCheck.HotkeyModifiers = Settings.Default.kosCheckKey & cModifiers;
             InitHook();
-
-            EveIntelServerConnector.Connect();
-            EveIntelServerConnector.Message += data => {
-                BeginInvoke(new EveIntelServerConnectorOnMessageDelegate(EveIntelServerConnectorOnMessage), data);
-            };
+            
+            EveIntelServerConnector.Connect("127.0.0.1", 1234, message => {
+                BeginInvoke(new EveIntelServerConnectorOnMessageDelegate(EveIntelServerConnectorOnMessage), message);
+            });
         }
 
-        private delegate void EveIntelServerConnectorOnMessageDelegate(string data);
+        #region server message handlers
 
-        private void EveIntelServerConnectorOnMessage(string data) {
+        private delegate void EveIntelServerConnectorOnMessageDelegate(MessageBase message);
+
+        private void EveIntelServerConnectorOnMessage(MessageBase message) {
+            switch (message.Id) {
+                case MessageInfo.MessageId:
+                {
+                    HandleInfoMessage((MessageInfo)message);
+                    break;
+                }
+                case MessageKos.MessageId:
+                {
+                    HandleKosMessage((MessageKos)message);
+                    break;
+                }
+            }
+        }
+
+        private void HandleInfoMessage(MessageInfo message) {
+            Text = @"eve-log-watcher (" + message.Clients + @" capsulers online)";
+        }
+
+        private void HandleKosMessage(MessageKos message) {
             var newRow = _CitadelLogs.NewRow();
-            var jObject = JObject.Parse(data);
-            var kos = ((JArray) jObject["Kos"]).Select(o => o.Value<string>()).ToArray();
-            newRow[0] = "KOS:" + string.Join(", ", kos);
-            long systemId = (long) jObject["SystemId"];
-            SolarSystem solarSystem = DbHelper.DataContext.SolarSystems.First(o => o.Id == systemId);
+
+            newRow[0] = "KOS:" + string.Join(", ", message.KosPlayers);
+
+            SolarSystem solarSystem = DbHelper.DataContext.SolarSystems.FirstOrDefault(o => o.Id == message.SystemId);
+            if (solarSystem == null) {
+                return;
+            }
+
             newRow[1] = solarSystem.SolarSystemName;
             _CitadelLogs.Rows.Add(newRow);
 
@@ -82,8 +106,10 @@ namespace eve_log_watcher
                 dataGridIntel.FirstDisplayedScrollingRowIndex = row.Index;
             }
 
-            UpdateMapKos(new[] {solarSystem.SolarSystemName}, true);
-        }
+            UpdateMapKos(new[] { solarSystem.SolarSystemName }, true);
+        } 
+
+        #endregion
 
         private void HookOnKeyPressed(object sender, KeyPressedEventArgs keyPressedEventArgs) {
             _FormCva = FormCva.ShowMe(Settings.Default.currentSystemId);
@@ -263,7 +289,7 @@ namespace eve_log_watcher
         }
 
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e) {
-            EveIntelServerConnector.Disconect();
+            EveIntelServerConnector.Disconnect();
         }
     }
 }

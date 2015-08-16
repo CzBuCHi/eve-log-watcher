@@ -8,7 +8,8 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using eve_log_watcher.cva_kos_api;
-using eve_log_watcher.server;
+using eve_log_watcher.eve_intel_server;
+using eve_log_watcher.eve_intel_server.messages;
 using EveAI.Live;
 using EveAI.Live.Character;
 using Newtonsoft.Json;
@@ -66,11 +67,11 @@ namespace eve_log_watcher
 
             string[] kos = _Form.DataTable.Rows.Cast<DataRow>().Where(row => (bool) row["Kos"]).Select(row => (string) row["PilotName"]).ToArray();
             if (kos.Length > 0) {
-                var data = new {
+                var data = new MessageKos {
                     SystemId = _Form._CurrentSystemId,
-                    Kos = kos
+                    KosPlayers = kos
                 };
-                EveIntelServerConnector.SendMessage(JObject.FromObject(data).ToString(Formatting.None));
+                EveIntelServerConnector.Send(data);
             }
         }
 
