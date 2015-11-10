@@ -34,6 +34,8 @@ namespace eve_log_watcher
             this.buttonStart = new System.Windows.Forms.Button();
             this.buttonStop = new System.Windows.Forms.Button();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.numMaxVisibleSystems = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
             this.buttonClear = new System.Windows.Forms.Button();
             this.buttonHotkeyChangeConfirm = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -53,6 +55,7 @@ namespace eve_log_watcher
             this.logWatcherLocal = new eve_log_watcher.controls.LogWatcher();
             this.logWatcherIntel = new eve_log_watcher.controls.LogWatcher();
             this.panelTop.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numMaxVisibleSystems)).BeginInit();
             this.panelRight.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridIntel)).BeginInit();
             this.SuspendLayout();
@@ -60,7 +63,7 @@ namespace eve_log_watcher
             // buttonStart
             // 
             this.buttonStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonStart.Location = new System.Drawing.Point(1040, 9);
+            this.buttonStart.Location = new System.Drawing.Point(1110, 9);
             this.buttonStart.Name = "buttonStart";
             this.buttonStart.Size = new System.Drawing.Size(55, 21);
             this.buttonStart.TabIndex = 1;
@@ -72,7 +75,7 @@ namespace eve_log_watcher
             // 
             this.buttonStop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonStop.Enabled = false;
-            this.buttonStop.Location = new System.Drawing.Point(1040, 9);
+            this.buttonStop.Location = new System.Drawing.Point(1110, 9);
             this.buttonStop.Name = "buttonStop";
             this.buttonStop.Size = new System.Drawing.Size(55, 21);
             this.buttonStop.TabIndex = 2;
@@ -83,6 +86,8 @@ namespace eve_log_watcher
             // 
             // panelTop
             // 
+            this.panelTop.Controls.Add(this.numMaxVisibleSystems);
+            this.panelTop.Controls.Add(this.label3);
             this.panelTop.Controls.Add(this.buttonClear);
             this.panelTop.Controls.Add(this.buttonStop);
             this.panelTop.Controls.Add(this.buttonStart);
@@ -98,13 +103,34 @@ namespace eve_log_watcher
             this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTop.Location = new System.Drawing.Point(0, 0);
             this.panelTop.Name = "panelTop";
-            this.panelTop.Size = new System.Drawing.Size(1134, 39);
+            this.panelTop.Size = new System.Drawing.Size(1204, 39);
             this.panelTop.TabIndex = 4;
+            // 
+            // numMaxVisibleSystems
+            // 
+            this.numMaxVisibleSystems.Location = new System.Drawing.Point(740, 9);
+            this.numMaxVisibleSystems.Name = "numMaxVisibleSystems";
+            this.numMaxVisibleSystems.Size = new System.Drawing.Size(60, 20);
+            this.numMaxVisibleSystems.TabIndex = 18;
+            this.numMaxVisibleSystems.Value = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(664, 13);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(70, 13);
+            this.label3.TabIndex = 17;
+            this.label3.Text = "Max systems:";
             // 
             // buttonClear
             // 
             this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonClear.Location = new System.Drawing.Point(984, 9);
+            this.buttonClear.Location = new System.Drawing.Point(1054, 9);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(55, 21);
             this.buttonClear.TabIndex = 15;
@@ -115,7 +141,7 @@ namespace eve_log_watcher
             // buttonHotkeyChangeConfirm
             // 
             this.buttonHotkeyChangeConfirm.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonHotkeyChangeConfirm.Location = new System.Drawing.Point(675, 9);
+            this.buttonHotkeyChangeConfirm.Location = new System.Drawing.Point(610, 9);
             this.buttonHotkeyChangeConfirm.Name = "buttonHotkeyChangeConfirm";
             this.buttonHotkeyChangeConfirm.Size = new System.Drawing.Size(48, 21);
             this.buttonHotkeyChangeConfirm.TabIndex = 14;
@@ -154,9 +180,9 @@ namespace eve_log_watcher
             // 
             this.hotkeyControlKosCheck.Hotkey = System.Windows.Forms.Keys.F;
             this.hotkeyControlKosCheck.HotkeyModifiers = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.None)));
-            this.hotkeyControlKosCheck.Location = new System.Drawing.Point(494, 10);
+            this.hotkeyControlKosCheck.Location = new System.Drawing.Point(494, 9);
             this.hotkeyControlKosCheck.Name = "hotkeyControlKosCheck";
-            this.hotkeyControlKosCheck.Size = new System.Drawing.Size(182, 20);
+            this.hotkeyControlKosCheck.Size = new System.Drawing.Size(119, 20);
             this.hotkeyControlKosCheck.TabIndex = 11;
             this.hotkeyControlKosCheck.Text = "Control + F";
             // 
@@ -177,7 +203,7 @@ namespace eve_log_watcher
             this.buttonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonRefresh.BackgroundImage = global::eve_log_watcher.Properties.Resources.refresh;
             this.buttonRefresh.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.buttonRefresh.Location = new System.Drawing.Point(1101, 9);
+            this.buttonRefresh.Location = new System.Drawing.Point(1171, 9);
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(21, 21);
             this.buttonRefresh.TabIndex = 9;
@@ -188,7 +214,7 @@ namespace eve_log_watcher
             // 
             this.labelChannels.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.labelChannels.AutoSize = true;
-            this.labelChannels.Location = new System.Drawing.Point(739, 13);
+            this.labelChannels.Location = new System.Drawing.Point(809, 13);
             this.labelChannels.Name = "labelChannels";
             this.labelChannels.Size = new System.Drawing.Size(54, 13);
             this.labelChannels.TabIndex = 8;
@@ -200,7 +226,7 @@ namespace eve_log_watcher
             this.comboLogs.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.comboLogs.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboLogs.FormattingEnabled = true;
-            this.comboLogs.Location = new System.Drawing.Point(799, 9);
+            this.comboLogs.Location = new System.Drawing.Point(869, 9);
             this.comboLogs.Name = "comboLogs";
             this.comboLogs.Size = new System.Drawing.Size(179, 21);
             this.comboLogs.TabIndex = 5;
@@ -209,7 +235,7 @@ namespace eve_log_watcher
             // 
             this.panelRight.Controls.Add(this.dataGridIntel);
             this.panelRight.Dock = System.Windows.Forms.DockStyle.Right;
-            this.panelRight.Location = new System.Drawing.Point(733, 39);
+            this.panelRight.Location = new System.Drawing.Point(803, 39);
             this.panelRight.Name = "panelRight";
             this.panelRight.Size = new System.Drawing.Size(401, 312);
             this.panelRight.TabIndex = 5;
@@ -268,11 +294,9 @@ namespace eve_log_watcher
             this.map.CurrentSystemName = null;
             this.map.Dock = System.Windows.Forms.DockStyle.Top;
             this.map.Location = new System.Drawing.Point(0, 39);
-            this.map.MaximumSize = new System.Drawing.Size(0, 800);
-            this.map.MaxVisibleSystems = 30;
+            this.map.MaximumSize = new System.Drawing.Size(0, 800);            
             this.map.Name = "map";
-            this.map.RedShowDuration = 10;
-            this.map.Size = new System.Drawing.Size(733, 137);
+            this.map.Size = new System.Drawing.Size(803, 137);
             this.map.TabIndex = 0;
             this.map.SizeChanged += new System.EventHandler(this.map_SizeChanged);
             // 
@@ -294,17 +318,18 @@ namespace eve_log_watcher
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1134, 351);
+            this.ClientSize = new System.Drawing.Size(1204, 351);
             this.Controls.Add(this.map);
             this.Controls.Add(this.panelRight);
             this.Controls.Add(this.panelTop);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MinimumSize = new System.Drawing.Size(1150, 39);
+            this.MinimumSize = new System.Drawing.Size(1220, 39);
             this.Name = "FormMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "eve-log-watcher";
             this.panelTop.ResumeLayout(false);
             this.panelTop.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numMaxVisibleSystems)).EndInit();
             this.panelRight.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridIntel)).EndInit();
             this.ResumeLayout(false);
@@ -334,6 +359,8 @@ namespace eve_log_watcher
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button buttonHotkeyChangeConfirm;
         private System.Windows.Forms.Button buttonClear;
+        private System.Windows.Forms.NumericUpDown numMaxVisibleSystems;
+        private System.Windows.Forms.Label label3;
     }
 }
 

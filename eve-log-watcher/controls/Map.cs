@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
@@ -21,7 +22,10 @@ namespace eve_log_watcher.controls
         }
 
         // ReSharper disable once MemberCanBePrivate.Global
+        [DefaultValue(10)]
         public int RedShowDuration { get; set; } = 10;
+
+        [DefaultValue(20)]
         public int MaxVisibleSystems { get; set; } = 20;
 
         public string CurrentSystemName {
@@ -49,11 +53,7 @@ namespace eve_log_watcher.controls
             try {
                 lock (_Nodes) {
                     foreach (Node node in _Nodes.Values) {
-                        if (node.LabelText == CurrentSystemName) {
-                            node.Attr.FillColor = Color.GreenYellow;
-                        } else {
-                            node.Attr.FillColor = Color.Transparent;
-                        }
+                        node.Attr.FillColor = node.LabelText == CurrentSystemName ? Color.GreenYellow : Color.Transparent;
                     }
                     foreach (KeyValuePair<string, DateTime> pair in RedInfo) {
                         Node node;
@@ -68,7 +68,7 @@ namespace eve_log_watcher.controls
             }
         }
 
-        private void UpdateGraph() {
+        public void UpdateGraph() {
             Dictionary<int, SystemInfo> infos;
             SystemInfo[][] q;
             GetSystems(out infos, out q);
@@ -78,8 +78,11 @@ namespace eve_log_watcher.controls
                 LayoutAlgorithmSettings = new MdsLayoutSettings {
                     EdgeRoutingSettings = new EdgeRoutingSettings {
                         EdgeRoutingMode = EdgeRoutingMode.Spline,
-                        RouteMultiEdgesAsBundles = false
+                        RouteMultiEdgesAsBundles = false,
+                        BendPenalty = 50,
+                        IncrementalRoutingThreshold = 10,
                     },
+                    IterationsWithMajorization = 10,
                     AdjustScale = true
                 }
             };
@@ -89,8 +92,10 @@ namespace eve_log_watcher.controls
             lock (_Nodes) {
                 _Nodes.Clear();
                 foreach (SystemInfo info in q.SelectMany(o => o)) {
+                    
                     if (!_Nodes.ContainsKey(info.Name)) {
                         Node node = graph.AddNode(info.Name);
+                        node.IsVisible = _Nodes.Count < MaxVisibleSystems;
                         _Nodes.Add(info.Name, node);
                     }
 
@@ -106,9 +111,20 @@ namespace eve_log_watcher.controls
                     if (!list.Contains(info.Name)) {
                         list.Add(info.Name);
                     }
+
+                    foreach (SystemInfo child in info.List) {
+                        if (!dict.TryGetValue(info.Name, out list)) {
+                            list = new HashSet<string>();
+                            dict[info.Name] = list;
+                        }
+                        if (!list.Contains(child.Name) && _Nodes.ContainsKey(child.Name)) {
+                            list.Add(child.Name);
+                        }
+                    }
                 }
             }
 
+            int fakeNodeIndex = 0;
             HashSet<string> edges = new HashSet<string>();
             foreach (KeyValuePair<string, HashSet<string>> pair in dict) {
                 foreach (string item in pair.Value) {
@@ -116,9 +132,20 @@ namespace eve_log_watcher.controls
                         continue;
                     }
 
-                    edges.Add(pair.Key + "-" + item);
-                    Edge edge = graph.AddEdge(pair.Key, item);
-                    edge.Attr.ArrowheadAtTarget = ArrowStyle.None;
+                    lock (_Nodes) {
+                        if (_Nodes[pair.Key].IsVisible) {
+                            string targetId = item;
+                            if (!_Nodes[item].IsVisible) {
+                                Node node = graph.AddNode((++fakeNodeIndex).ToString());
+                                node.IsVisible = false;
+                                targetId = node.Id;
+                            }
+
+                            edges.Add(pair.Key + "-" + item);
+                            Edge edge = graph.AddEdge(pair.Key, targetId);
+                            edge.Attr.ArrowheadAtTarget = ArrowStyle.None;
+                        }
+                    }
                 }
             }
 
@@ -127,23 +154,21 @@ namespace eve_log_watcher.controls
             UpdateNodes();
         }
 
-        private IEnumerable<SystemInfo> GetConnected(IEnumerable<SystemInfo> prev, int[] prevIds) {
+        private IEnumerable<SystemInfo> GetConnected(IEnumerable<SystemInfo> prev) {
             foreach (SystemInfo o in prev) {
                 IQueryable<SolarSystem> q = from o3 in DbHelper.DataContext.SolarSystemJumps
-                        join o4 in DbHelper.DataContext.SolarSystems on o3.ToSolarsystemId equals o4.Id
-                        where o3.FromSolarsystemId == o.Id
-                        select o4;
+                                            join o4 in DbHelper.DataContext.SolarSystems on o3.ToSolarsystemId equals o4.Id
+                                            where o3.FromSolarsystemId == o.Id
+                                            select o4;
 
                 foreach (SolarSystem o2 in q) {
-                    o.Childrens++;
-                    if (prevIds.Contains(o2.Id)) {
-                        continue;
-                    }
-                    yield return new SystemInfo {
+                    SystemInfo info = new SystemInfo {
                         Id = o2.Id,
                         Parent = o,
                         Name = o2.SolarSystemName
                     };
+                    o.List.Add(info);
+                    yield return info;
                 }
             }
         }
@@ -160,20 +185,16 @@ namespace eve_log_watcher.controls
 
             List<SystemInfo[]> jumps = new List<SystemInfo[]> {(SystemInfo[]) current};
             SystemInfo[] total = current.ToArray();
-
-            while (total.Length < MaxVisibleSystems) {
-                SystemInfo[] next = GetConnected(current, total.Select(o => o.Id).ToArray()).ToArray();
-                if (total.Length + next.Length > 20) {
-                    int count = MaxVisibleSystems - total.Length;
-                    if (count < next.Length) {
-                        SystemInfo[] array = new SystemInfo[count];
-                        Array.Copy(next, array, count);
-                        next = array;
-                    }
-                }
+            int overflow = 0;
+            while (overflow < 2) {
+                SystemInfo[] next = GetConnected(current).Distinct().ToArray();
                 total = total.Union(next).ToArray();
                 jumps.Add(next);
                 current = next;
+
+                if (total.Length > MaxVisibleSystems) {
+                    ++overflow;
+                }
             }
 
             infos = total.ToDictionary(o => o.Id);
@@ -192,8 +213,8 @@ namespace eve_log_watcher.controls
                 DateTime now = DateTime.Now;
                 TimeSpan delta = TimeSpan.FromSeconds(RedShowDuration);
                 IEnumerable<string> q = from pair in _RedInfo
-                        where now - pair.Value > delta
-                        select pair.Key;
+                                        where now - pair.Value > delta
+                                        select pair.Key;
 
                 trash = q.ToArray();
 
@@ -215,7 +236,7 @@ namespace eve_log_watcher.controls
             public int Id { get; set; }
             public string Name { get; set; }
             public SystemInfo Parent { get; set; }
-            public int Childrens { get; set; }
+            public List<SystemInfo> List { get; } = new List<SystemInfo>();
 
             public override bool Equals(object obj) {
                 if (ReferenceEquals(null, obj)) {

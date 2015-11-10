@@ -13,11 +13,12 @@ namespace eve_log_watcher
 {
     public partial class FormMain : Form
     {
+        private const Keys cModifiers = Keys.Control | Keys.Shift | Keys.Alt;
         private readonly DataTable _CitadelLogs;
         private readonly KeyboardHook _Hook = new KeyboardHook();
-        private FormCva _FormCva;
         private bool _ComboBoxSystemsSetValue;
-        private const Keys cModifiers = Keys.Control | Keys.Shift | Keys.Alt;
+        private FormCva _FormCva;
+
         public FormMain() {
             InitializeComponent();
 
@@ -37,6 +38,9 @@ namespace eve_log_watcher
             comboLogs.SelectedItem = Settings.Default.intelLogName;
             comboLogs.SelectedIndexChanged += comboLogs_SelectedIndexChanged;
 
+            numMaxVisibleSystems.Value = Settings.Default.maxVisibleSystems;
+            numMaxVisibleSystems.ValueChanged += numMaxVisibleSystems_ValueChanged;
+
             _ComboBoxSystemsSetValue = true;
             comboBoxSystems.DataSource = DbHelper.DataContext.SolarSystems.ToArray();
             _ComboBoxSystemsSetValue = false;
@@ -48,7 +52,7 @@ namespace eve_log_watcher
                 _ComboBoxSystemsSetValue = false;
             }
 
-            
+
             hotkeyControlKosCheck.Hotkey = Settings.Default.kosCheckKey & ~cModifiers;
             hotkeyControlKosCheck.HotkeyModifiers = Settings.Default.kosCheckKey & cModifiers;
             InitHook();
@@ -80,7 +84,7 @@ namespace eve_log_watcher
             }
             if (currentSystemName != null) {
                 IQueryable<SolarSystem> q = from o in DbHelper.DataContext.SolarSystems
-                                     where o.SolarSystemName == currentSystemName
+                                            where o.SolarSystemName == currentSystemName
                                             select o;
 
                 SolarSystem solarSystem = q.FirstOrDefault();
@@ -90,7 +94,7 @@ namespace eve_log_watcher
                     _ComboBoxSystemsSetValue = true;
                     comboBoxSystems.SelectedItem = solarSystem;
                     _ComboBoxSystemsSetValue = false;
-                }                
+                }
             }
         }
 
@@ -177,12 +181,6 @@ namespace eve_log_watcher
             logWatcherIntel.LogName = Settings.Default.intelLogName;
         }
 
-        private class LogWatcherIntelProcessNewDataArg
-        {
-            public string[] Lines { get; set; }
-            public DataTable Logs { get; set; }
-        }
-
         private void buttonRefresh_Click(object sender, EventArgs e) {
             string selected = (string) comboLogs.SelectedItem;
             string[] logNames = LogWatcher.GetLogNames();
@@ -207,7 +205,7 @@ namespace eve_log_watcher
 
         private void InitHook() {
             _Hook.KeyPressed -= HookOnKeyPressed;
-            _Hook.UnregisterHotKey();            
+            _Hook.UnregisterHotKey();
             _Hook.RegisterHotKey(Settings.Default.kosCheckKey);
             _Hook.KeyPressed += HookOnKeyPressed;
         }
@@ -217,8 +215,20 @@ namespace eve_log_watcher
             InitHook();
         }
 
-        private void buttonClear_Click(object sender, EventArgs e) {            
-            LogWatcher.Clear();            
+        private void buttonClear_Click(object sender, EventArgs e) {
+            LogWatcher.Clear();
+        }
+
+        private void numMaxVisibleSystems_ValueChanged(object sender, EventArgs e) {
+            Settings.Default.maxVisibleSystems = (int)numMaxVisibleSystems.Value;
+            map.MaxVisibleSystems = Settings.Default.maxVisibleSystems;
+            map.UpdateGraph();
+        }
+
+        private class LogWatcherIntelProcessNewDataArg
+        {
+            public string[] Lines { get; set; }
+            public DataTable Logs { get; set; }
         }
     }
 }
