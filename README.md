@@ -11,5 +11,5 @@ http://kos.cva-eve.org/ integrated check:
 - all kos request are cached in memory until app is closed
 - change shortcut: click into box on main form, press desired shortcut and then click apply button.
 	
-Screenhot: (in less than 10 seconds ago there was intel about 'Mamet' solar system)
+Screenhot: (pink systems shows, that there was some intel in less than 10 seconds ago)
 ![Screenhot](https://raw.githubusercontent.com/CzBuCHi/eve-log-watcher/master/screenhot.png)
