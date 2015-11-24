@@ -4,12 +4,16 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 using eve_log_watcher.cva_kos_api;
 using EveAI.Live;
 using EveAI.Live.Character;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace eve_log_watcher
 {
@@ -133,7 +137,7 @@ namespace eve_log_watcher
         }
 
         private static void FillDataTable(object sender, DoWorkEventArgs args) {
-#if DEBUG
+#if DESIGN
             FillDataTableArg arg = (FillDataTableArg)args.Argument;
             int sum = 0;
             for (int i = 0; i < 10; i++) {
@@ -163,122 +167,110 @@ namespace eve_log_watcher
         private static class KosChecker
         {
             private static EveApi _Api;
-            private static readonly Dictionary<long, bool> _KosCharacters = new Dictionary<long, bool>();
-            private static readonly Dictionary<long, bool> _KosCorporations = new Dictionary<long, bool>();
-            private static readonly Dictionary<long, bool> _KosAlliances = new Dictionary<long, bool>();
+            private static readonly Dictionary<string, CharacterInfo> _KnownCharacters = new Dictionary<string, CharacterInfo>();
 
             public static int FillDataTable(FillDataTableArg arg) {
                 if (_Api == null) {
                     _Api = new EveApi("eve-log-watcher", 4488664, "GvRnlFE0G2r3yX2OzHzzldNEN0BSx9DGJQgebKgfuzRO8vmrV8WVY3u3lqLadAZ8");
                 }
 
-                Dictionary<string, long> dict = _Api.ConvertNamesToIDs(arg.Names);
+                List<CharacterInfo> characters = new List<CharacterInfo>();
+                List<string> unknowns = new List<string>();
+                foreach (string name in arg.Names) {
+                    CharacterInfo characterInfo;
+                    if (!_KnownCharacters.TryGetValue(name, out characterInfo)) {
+                        unknowns.Add(name);
+                    } else {
+                        characters.Add(characterInfo);
+                    }
+                }
+                if (unknowns.Count > 0) {
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://kos.cva-eve.org/api/?c=json&type=multi&q=" + string.Join(",", unknowns));
+                    JObject jObject;
+                    using (WebResponse response = request.GetResponse()) {
+                        using (Stream stream = response.GetResponseStream()) {
+                            Debug.Assert(stream != null);
+                            using (StreamReader reader = new StreamReader(stream)) {
+                                using (JsonTextReader jReader = new JsonTextReader(reader)) {
+                                    jObject = JObject.Load(jReader);
+                                }
+                            }
+                        }
+                    }
+
+                    JToken jMessage = jObject["message"];
+                    if (jMessage.Value<string>() != "OK") {
+                        throw new Exception("error message from kos.cva-eve.org: " + jMessage.Value<string>());
+                    }
+
+                    JArray jResults = (JArray)jObject["results"];
+                    foreach (JToken jResult in jResults) {
+                        CharacterInfo info = new CharacterInfo(jResult);
+                        _KnownCharacters.Add(info.PilotName, info);
+                        characters.Add(info);
+                    }
+
+                    unknowns = unknowns.Where(o => !_KnownCharacters.ContainsKey(o)).ToList();
+                }
 
                 int kosCounter = 0;
-                foreach (KeyValuePair<string, long> pair in dict) {
-                    if (pair.Value == 0) {
-                        continue;
-                    }
-
-                    _Api.Authentication.CharacterID = pair.Value;
-                    CharacterInfo info = _Api.GetCharacterInfo();
-                    if (info.CharacterID == 0) {
-                        continue;
-                    }
-
+                foreach (CharacterInfo characterInfo in characters) {
                     DataRow dataRow = arg.Table.NewRow();
-                    if (FillDataRow(dataRow, info)) {
+                    characterInfo.FillDataRow(dataRow);
+                    if (characterInfo.Kos) {
                         kosCounter++;
                     }
                     arg.Table.Rows.Add(dataRow);
-                    Thread.Sleep(50);
+
+                }
+
+                foreach (string unknown in unknowns) {
+                    DataRow dataRow = arg.Table.NewRow();
+                    dataRow[0] = unknown;
+                    dataRow[2] = "???";
+                    arg.Table.Rows.Add(dataRow);
                 }
 
                 return kosCounter;
             }
-
-            private static bool FillDataRow(DataRow dataRow, CharacterInfo characterInfo) {
-                bool pilotKos = IsKos(characterInfo.CharacterID, characterInfo.Name, IdType.Character);
-                bool corporationKos;
-                bool allianceKos;
-                if (IsNpcCorp(characterInfo.CorporationID)) {
-                    corporationKos = false;
-                    allianceKos = false;
-                } else {
-                    corporationKos = IsKos(characterInfo.CorporationID, characterInfo.CorporationName, IdType.Corporation);
-                    allianceKos = (characterInfo.AllianceID != -1) && IsKos(characterInfo.AllianceID, characterInfo.AllianceName, IdType.Alliance);
-                }
-                bool kos = pilotKos || corporationKos || allianceKos;
-
-                dataRow[0] = characterInfo.Name;
-                dataRow[1] = pilotKos;
-                dataRow[2] = characterInfo.CorporationName;
-                dataRow[3] = corporationKos;
-                dataRow[4] = characterInfo.AllianceName;
-                dataRow[5] = allianceKos;
-                dataRow[6] = kos;
-
-                return kos;
-            }
-
-            private static bool IsKos(long id, string name, IdType type) {
-                bool kos = false;
-
-                CvaCharacterInfo characterInfo = null;
-                CvaCorporationInfo corpInfo = null;
-                CvaAllianceInfo allianceInfo = null;
-
-                switch (type) {
-                    case IdType.Character: {
-                        if (!_KosCharacters.TryGetValue(id, out kos)) {
-                            characterInfo = CvaClient.GetCharacterInfo(id, name);
-                            kos = characterInfo?.Kos == true;
-                        }
-                        break;
-                    }
-                    case IdType.Corporation: {
-                        if (!_KosCorporations.TryGetValue(id, out kos)) {
-                            corpInfo = CvaClient.GetCorpInfo(id, name);
-                            kos = corpInfo?.Kos == true;
-                        }
-                        break;
-                    }
-                    case IdType.Alliance: {
-                        if (!_KosAlliances.TryGetValue(id, out kos)) {
-                            allianceInfo = CvaClient.GetAllianceInfo(id, name);
-                            kos = allianceInfo?.Kos == true;
-                        }
-                        break;
-                    }
-                }
-
-                if (characterInfo != null && !_KosCharacters.ContainsKey(characterInfo.EveId)) {
-                    _KosCharacters.Add(characterInfo.EveId, characterInfo.Kos);
-                    corpInfo = characterInfo.Corp;
-                }
-
-                if (corpInfo != null && !_KosCorporations.ContainsKey(corpInfo.EveId)) {
-                    _KosCorporations.Add(corpInfo.EveId, corpInfo.Kos);
-                    allianceInfo = corpInfo.Alliance;
-                }
-
-                if (allianceInfo != null && !_KosAlliances.ContainsKey(allianceInfo.EveId)) {
-                    _KosAlliances.Add(allianceInfo.EveId, allianceInfo.Kos);
-                }
-
-                return kos;
-            }
-
-            private static bool IsNpcCorp(long id) {
-                return id >= 1000002 && id <= 1000182;
-            }
         }
 
-        private enum IdType
+        private class CharacterInfo
         {
-            Character,
-            Corporation,
-            Alliance
+            public CharacterInfo(JToken jObject) {
+                PilotName = jObject["label"].Value<string>();
+                PilotKos = jObject["kos"].Value<bool>();
+
+                JToken jCorp = jObject["corp"];
+                CorporationName = jCorp["label"].Value<string>();
+                CorporationKos = jCorp["kos"].Value<bool>();
+
+                JToken jAlliace = jCorp["alliance"];
+                if (jAlliace != null) {
+                    AllianceName = jAlliace["label"].Value<string>();
+                    AllianceKos = jAlliace["kos"].Value<bool>();
+                }
+            }
+
+            public string PilotName { get;  }
+            public string CorporationName { get;  }
+            public string AllianceName { get;  }
+
+            public bool PilotKos { get;  }
+            public bool CorporationKos { get;  }
+            public bool AllianceKos { get;  }
+
+            public bool Kos => PilotKos || CorporationKos || AllianceKos;
+
+            public void FillDataRow(DataRow dataRow) {
+                dataRow[0] = PilotName;
+                dataRow[1] = PilotKos;
+                dataRow[2] = CorporationName;
+                dataRow[3] = CorporationKos;
+                dataRow[4] = AllianceName;
+                dataRow[5] = AllianceKos;
+                dataRow[6] = Kos;
+            }
         }
 
         #endregion

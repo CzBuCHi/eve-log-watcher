@@ -40,8 +40,8 @@
     <PublisherName>CzBuCHi</PublisherName>
     <WebPage>publish.htm</WebPage>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.1.0</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.1.1</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -142,7 +142,6 @@
       <DependentUpon>Map.cs</DependentUpon>
     </Compile>
     <Compile Include="cva-kos-api\DataClasses.cs" />
-    <Compile Include="cva-kos-api\CvaClient.cs" />
     <Compile Include="DbHelper.cs" />
     <Compile Include="FormCva.cs">
       <SubType>Form</SubType>

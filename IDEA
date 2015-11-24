@@ -1,0 +1,18 @@
+1)
+    - najit uzavrene systemy pobliz
+    - napr: s9x-ax -- x-4wzd a zobrazit vsechny systemy i kdyz presahuji vzdalenost / max pocet systemu
+
+2)   
+    - zobrazit sousedy po kliku na node systemu 
+    - ignorovat max pocet systemu 
+    - klik na node s CTRL -> skryti nodu ( a vsech co prestanou byt connected k root)
+    
+3)
+    - moznost posunout node?
+    
+4)
+    - konfigurace presunou na pozici logu (taby? tlacitko pro prepinani config/log?)
+    
+    
+5)
+    - kos check predelat na http://kos.cva-eve.org/api/?c=json&type=multi&q=pilot1,pilot2,pilot3,...
