@@ -71,15 +71,15 @@ namespace eve_log_watcher
             Color redSelected = Color.FromArgb(250, 127, 113);
 
             foreach (DataGridViewRow row in dataGridCva.Rows) {
-                if ((bool) row.Cells[colPilotKos.Name].Value) {
+                if (row.Cells[colPilotKos.Name].Value as bool? == true) {
                     row.Cells[colPilotName.Name].Style.BackColor = red;
                     row.Cells[colPilotName.Name].Style.SelectionBackColor = redSelected;
                 }
-                if ((bool) row.Cells[colCorporationKos.Name].Value) {
+                if (row.Cells[colCorporationKos.Name].Value as bool? == true) {
                     row.Cells[colCorporationName.Name].Style.BackColor = red;
                     row.Cells[colCorporationName.Name].Style.SelectionBackColor = redSelected;
                 }
-                if ((bool) row.Cells[colAllianceKos.Name].Value) {
+                if (row.Cells[colAllianceKos.Name].Value as bool? == true) {
                     row.Cells[colAllianceName.Name].Style.BackColor = red;
                     row.Cells[colAllianceName.Name].Style.SelectionBackColor = redSelected;
                 }
